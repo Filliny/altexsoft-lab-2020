@@ -1,14 +1,13 @@
 ﻿using System;
 
-namespace ConsoleApp1
+namespace ConsoleApp
 {
     class Program
     {
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-
-
+            Console.ReadLine();
         }
     }
 }
