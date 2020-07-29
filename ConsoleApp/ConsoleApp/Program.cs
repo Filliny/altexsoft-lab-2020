@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using PowerArgs;
+using System;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.Win32.SafeHandles;
-using PowerArgs;
 
 namespace ConsoleApp
 {
     class Program
     {
         static void Main(string[] args)
-        { 
+        {
+            MyArgs parsed = new MyArgs();
 
             if (args.Length == 0)
             {
@@ -21,8 +20,7 @@ namespace ConsoleApp
 
             try
             {
-                var parsed = Args.Parse<MyArgs>(args);
-               
+                parsed = Args.Parse<MyArgs>(args);
             }
             catch (ArgException ex)
             {
@@ -31,13 +29,10 @@ namespace ConsoleApp
             }
 
 
-
-            //menu.Process();
+            Menu.Process(new FileClass(parsed.FilePath), parsed);
 
             Console.ReadLine();
         }
-
-
     }
 
     class FileClass
@@ -72,15 +67,59 @@ namespace ConsoleApp
             Text = Regex.Replace(Text, regexStr, "", RegexOptions.IgnoreCase);
 
             Console.WriteLine(Text);
+
+            File.WriteAllText(WorkPath, Text);
         }
 
+        public void CountWords()
+        {
+            string regExpr = @"\b\w+[-']*\w*\b";
+            var result = Regex.Matches(Text, regExpr);
+            Console.WriteLine($"\nThere is {result.Count} words in given text.");
+            Console.WriteLine("Every ten word is: ");
 
+            for (int i = 9; i < result.Count;)
+            {
+                Console.Write(result[i]);
+                i += 10;
+
+                if (i < result.Count)
+                {
+                    Console.Write(", ");
+                }
+                else
+                {
+                    Console.Write(".\n");
+                }
+            }
+        }
+
+        public void ReverseSentence(int numSent)
+        {
+            string regExpr = @"[A-Za-z](.*?|\n?|\r?)*?[.?!]+(?=\W)";
+            string wordExpr = @"\b\w+[-']*\w*\b";
+            var sentences = Regex.Matches(Text, regExpr);
+
+            string sentence = sentences[numSent].Value;
+
+            var words = Regex.Matches(sentence, wordExpr);
+
+            Console.WriteLine($"\nReversed sentence number {++numSent} :\n");
+            
+            foreach (Match word in words)
+            {
+                Console.Write(new String(word.Value.ToCharArray().Reverse().ToArray()) );
+                Console.Write(" ");
+            }
+
+            Console.Write(".");
+
+        }
     }
 
 
     static class Menu
     {
-
         public static string[] GetArgs()
         {
             string[] argums = new string[2];
@@ -102,8 +141,11 @@ namespace ConsoleApp
                 Array.Resize(ref argums, 3);
                 argums[0] = "-F";
 
-                Console.Write("Give file process option :\n1 to remove \n2 for show each ten word\n3 to show each third sentence): ");
-               
+                Console.Write("Give file process option :" +
+                              "\n1 to remove " +
+                              "\n2 for show each ten word" +
+                              "\n3 to show each third sentence\n> ");
+
                 while (argums[2] == null)
                 {
                     switch (Console.ReadLine())
@@ -130,47 +172,36 @@ namespace ConsoleApp
                     Console.Write("Give word or char to remove : ");
                     argums[4] = Console.ReadLine().ToLower();
                 }
-
             }
-            
+
             return argums;
         }
 
-        public static void Process(FileClass File, MyArgs args)
+        public static void Process(FileClass file, MyArgs args)
         {
-            
-                //
-                // if (argums.Length == 1)
-                // {
-                //     if (argums[0].Equals("-h"))
-                //     {
-                //         Console.WriteLine("help");
-                //         return;
-                //     }
-                //
-                //     //ignore file if only path given
-                //     var dir = Path.GetDirectoryName(argums[0]);
-                // }
-                // else
-                // {
-                //     FileClass file = new FileClass(argums[0]);
-                //
-                //     switch (argums[1])
-                //     {
-                //         case "remove":
-                //             file.MakeBackup();
-                //             file.Remove(argums[2]);
-                //             break;
-                //
-                //         default:
-                //             Console.WriteLine("Wrong arguments given! type -h for help display");
-                //             break;
-                //     }
-                // }
-            
+            if (args.FilePath != null)
+            {
+                if (args.Remove)
+                {
+                    file.MakeBackup();
+                    file.Remove(args.Word);
+                }
 
+                if (args.ShowTen)
+                {
+                    file.CountWords();
+                }
+
+                if (args.ThirdSentense)
+                {
+                    file.ReverseSentence(2);
+                }
+            }
+
+            if (args.DirPath != null)
+            {
+            }
         }
-
     }
 
 
@@ -199,8 +230,6 @@ namespace ConsoleApp
     }
 
 
-
-
     [ArgExceptionBehavior(ArgExceptionPolicy.StandardExceptionHandling)]
     class MyArgs
     {
@@ -218,19 +247,16 @@ namespace ConsoleApp
 
         [ArgShortcut("-W"), ArgDescription("Word to remove e.g. -W word_to_remove")]
         public string Word { get; set; }
-        
+
         [ArgShortcut("-S"), ArgDescription("Show each ten word in text")]
         public bool ShowTen { get; set; }
 
-        [ArgShortcut("-T"), ArgDescription("Show each third sentence in text")]
+        [ArgShortcut("-T"), ArgDescription("Show third reversed sentence in text")]
         public bool ThirdSentense { get; set; }
-        
     }
 
     interface IFileProcessor
     {
-        
     }
-    
 }
 
