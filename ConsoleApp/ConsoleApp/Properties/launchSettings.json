@@ -2,10 +2,10 @@
   "profiles": {
     "ConsoleApp": {
       "commandName": "Project", 
-      "commandLineArgs": "testfile.txt remove the"
+      //"commandLineArgs": "-F testfile.txt -S -W the"
       //"commandLineArgs": "C:\\Users\\Filliny\\source\\repos\\Filliny\\altexsoft-lab-2020\\ConsoleApp\\testfile.txt showten"
       //"commandLineArgs": "-h"
-      //"commandLineArgs": "xvdsg cgfh fgfdh"
+      "commandLineArgs": "xvdsg cgfh fgfdh"
 
     }
     

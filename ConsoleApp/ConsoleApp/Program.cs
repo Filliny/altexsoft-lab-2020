@@ -4,22 +4,35 @@ using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Win32.SafeHandles;
+using PowerArgs;
 
 namespace ConsoleApp
 {
     class Program
     {
         static void Main(string[] args)
-        {
-            Menu menu = new Menu(args);
+        { 
 
             if (args.Length == 0)
             {
                 Console.WriteLine("You didn't give command line options! ");
-                menu.GetArgs();
+                args = Menu.GetArgs();
             }
 
-            menu.Process();
+            try
+            {
+                var parsed = Args.Parse<MyArgs>(args);
+               
+            }
+            catch (ArgException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ArgUsage.GenerateUsageFromTemplate<MyArgs>());
+            }
+
+
+
+            //menu.Process();
 
             Console.ReadLine();
         }
@@ -65,145 +78,104 @@ namespace ConsoleApp
     }
 
 
-    class Menu
+    static class Menu
     {
-        private string[] argums;
 
-
-        public Menu(string[] argums)
+        public static string[] GetArgs()
         {
-            this.argums = argums;
-        }
+            string[] argums = new string[2];
 
-        public void GetArgs()
-        {
-            Array.Resize(ref argums, 1);
             Console.Write("Give filename or path to process: ");
 
-            //Can skip this cos we parse in Process method
-            while (!ArgValidator.PathTryParse(Console.ReadLine(), ref argums[0]))
+            while (!PathValidator.PathTryParse(Console.ReadLine(), ref argums[1]))
             {
                 Console.Write("Wrong path! Give right value: ");
             }
 
-            if ((new FileInfo(argums[0]).Attributes & FileAttributes.Directory) != FileAttributes.Directory)
+
+            if ((new FileInfo(argums[1]).Attributes & FileAttributes.Directory) == FileAttributes.Directory)
             {
-                Array.Resize(ref argums, 2);
-                Console.Write("Give file process option (remove, showten or thirdsentence): ");
-                argums[1] = Console.ReadLine().ToLower();
-
-                if (argums[1].Equals("remove"))
-                {
-                    Array.Resize(ref argums, 3);
-                    Console.Write("Give word or char to remove : ");
-                    argums[2] = Console.ReadLine().ToLower();
-                }
-            }
-        }
-
-        public void Process()
-        {
-
-            if (ArgValidator.PathTryParse(argums[0], ref argums[0]))
-            {
-
-
-                if (argums.Length == 1)
-                {
-                    if (argums[0].Equals("-h"))
-                    {
-                        Console.WriteLine("help");
-                        return;
-                    }
-
-                    //ignore file if only path given
-                    var dir = Path.GetDirectoryName(argums[0]);
-                }
-                else
-                {
-                    FileClass file = new FileClass(argums[0]);
-
-                    switch (argums[1])
-                    {
-                        case "remove":
-                            file.MakeBackup();
-                            file.Remove(argums[2]);
-                            break;
-
-                        default:
-                            Console.WriteLine("Wrong arguments given! type -h for help display");
-                            break;
-                    }
-                }
-            }
-            else if (Path.GetFileName(argums[0]).ToLower().Equals("-h"))
-            {
-                ShowHelp();
+                argums[0] = "-D";
             }
             else
             {
-                Console.WriteLine("Wrong path!");
+                Array.Resize(ref argums, 3);
+                argums[0] = "-F";
+
+                Console.Write("Give file process option :\n1 to remove \n2 for show each ten word\n3 to show each third sentence): ");
+               
+                while (argums[2] == null)
+                {
+                    switch (Console.ReadLine())
+                    {
+                        case "1":
+                            argums[2] = "-R";
+                            break;
+                        case "2":
+                            argums[2] = "-S";
+                            break;
+                        case "3":
+                            argums[2] = "-T";
+                            break;
+                        default:
+                            Console.WriteLine("Choose right number!");
+                            break;
+                    }
+                }
+
+                if (argums[2].Equals("-R"))
+                {
+                    Array.Resize(ref argums, 5);
+                    argums[3] = "-W";
+                    Console.Write("Give word or char to remove : ");
+                    argums[4] = Console.ReadLine().ToLower();
+                }
+
             }
-
-
+            
+            return argums;
         }
 
-
-
-        public void ShowHelp()
+        public static void Process(FileClass File, MyArgs args)
         {
-            Console.WriteLine("HELP");
+            
+                //
+                // if (argums.Length == 1)
+                // {
+                //     if (argums[0].Equals("-h"))
+                //     {
+                //         Console.WriteLine("help");
+                //         return;
+                //     }
+                //
+                //     //ignore file if only path given
+                //     var dir = Path.GetDirectoryName(argums[0]);
+                // }
+                // else
+                // {
+                //     FileClass file = new FileClass(argums[0]);
+                //
+                //     switch (argums[1])
+                //     {
+                //         case "remove":
+                //             file.MakeBackup();
+                //             file.Remove(argums[2]);
+                //             break;
+                //
+                //         default:
+                //             Console.WriteLine("Wrong arguments given! type -h for help display");
+                //             break;
+                //     }
+                // }
+            
+
         }
 
     }
 
-    static class ArgValidator
+
+    static class PathValidator //left from earlier validator to help with user input
     {
-        private static List<string> actions = new List<string> { "remove", "showten", "thirdsentence" };
-
-
-        public static bool Validate(ref string[] arguments)
-        {
-            if (PathTryParse(arguments[0], ref arguments[0]))
-            {
-                if (((new FileInfo(arguments[0]).Attributes & FileAttributes.Directory) != FileAttributes.Directory))
-                {
-                    return true;
-                }
-                else if (arguments.Length >=2)
-                {
-                    if (ActionsVal(arguments[1]))
-                    {
-                        if (arguments[1] == "remove" && arguments.Length == 3)
-                        {
-                            return true;
-                        }
-                        else if(arguments.Length ==2)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine("File or folder path wrong! ");
-            }
-
-            return false;
-        }
-
-        public static bool ActionsVal(string actionCandidate)
-        {
-            return actions.Contains(actionCandidate);
-        }
-
-
-
         public static bool PathTryParse(string input, ref string path)
         {
             if (!Path.IsPathRooted(input))
@@ -224,8 +196,41 @@ namespace ConsoleApp
 
             return false;
         }
-
-
     }
+
+
+
+
+    [ArgExceptionBehavior(ArgExceptionPolicy.StandardExceptionHandling)]
+    class MyArgs
+    {
+        [HelpHook, ArgShortcut("-h"), ArgDescription("Shows this help")]
+        public bool Help { get; set; }
+
+        [ArgExistingFile, ArgDescription("Path to file to process")]
+        public string FilePath { get; set; }
+
+        [ArgExistingDirectory, ArgDescription("Path to folder to browse")]
+        public string DirPath { get; set; }
+
+        [ArgShortcut("-R"), ArgDescription("Remove any word or char in all text. Use with -W")]
+        public bool Remove { get; set; }
+
+        [ArgShortcut("-W"), ArgDescription("Word to remove e.g. -W word_to_remove")]
+        public string Word { get; set; }
+        
+        [ArgShortcut("-S"), ArgDescription("Show each ten word in text")]
+        public bool ShowTen { get; set; }
+
+        [ArgShortcut("-T"), ArgDescription("Show each third sentence in text")]
+        public bool ThirdSentense { get; set; }
+        
+    }
+
+    interface IFileProcessor
+    {
+        
+    }
+    
 }
 
