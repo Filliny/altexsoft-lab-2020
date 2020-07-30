@@ -1,9 +1,9 @@
 {
   "profiles": {
     "ConsoleApp": {
-      "commandName": "Project", 
-      "commandLineArgs": "-F testfile.txt -S -T -R -W the"
-      //"commandLineArgs": "C:\\Users\\Filliny\\source\\repos\\Filliny\\altexsoft-lab-2020\\ConsoleApp\\testfile.txt showten"
+      "commandName": "Project",
+      //"commandLineArgs": "-D D:\\Books -F testfile.txt -S -T -R -W the"
+      //"commandLineArgs": "-D D:\\Books -R -W the"
       //"commandLineArgs": "-h"
       //"commandLineArgs": "xvdsg cgfh fgfdh"
 
