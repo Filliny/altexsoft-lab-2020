@@ -1,6 +1,7 @@
 ﻿using ConsoleApp.Instant;
 using System;
 using System.IO;
+using ConsoleApp.FileProcess;
 
 
 namespace ConsoleApp.Statics
@@ -64,34 +65,7 @@ namespace ConsoleApp.Statics
             return argums;
         }
 
-        public static void Process(MyArgs args)
-        {
-            if (args.FilePath != null)
-            {
-                FileClass file = new FileClass(args.FilePath); //one dependent place((
-
-                if (args.Remove)
-                {
-                    file.MakeBackup();
-                    file.Remove(args.Word);
-                }
-
-                if (args.ShowTen)
-                {
-                    file.CountWords();
-                }
-
-                if (args.ThirdSentence)
-                {
-                    file.ReverseSentence(2);
-                }
-            }
-
-            if (args.DirPath != null)
-            {
-                FileBrowser.ShowContent(args.DirPath, args);
-            }
-        }
+       
     }
 
 }

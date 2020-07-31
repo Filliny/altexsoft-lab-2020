@@ -2,8 +2,9 @@
 using System;
 using System.IO;
 using System.Linq;
+using ConsoleApp.InputWorkers;
 
-namespace ConsoleApp.Statics
+namespace ConsoleApp.FileHelpers
 {
     static class FileBrowser
     {
@@ -55,10 +56,16 @@ namespace ConsoleApp.Statics
                 }
                 else if (ID == "R") //go to parent
                 {
-
-                    args.DirPath = dir.Parent.FullName;
-                    ShowContent(args.DirPath, args);
-                    return;
+                    if (dir.Parent != null)
+                    {
+                        args.DirPath = dir.Parent.FullName;
+                        ShowContent(args.DirPath, args);
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nCant go top! Choose another: ");
+                    }
                 }
                 else if (dirDictionary.ContainsKey(ID))
                 {
@@ -78,7 +85,7 @@ namespace ConsoleApp.Statics
                         //args.DirPath = null;
                     }
 
-                    Menu.Process(args);
+                    Processor.Process(args);
                     return;
                 }
                 else

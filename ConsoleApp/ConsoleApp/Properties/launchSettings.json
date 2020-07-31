@@ -2,7 +2,7 @@
   "profiles": {
     "ConsoleApp": {
       "commandName": "Project",
-      //"commandLineArgs": "-D D:\\Books -F testfile.txt -S -T -R -W the"
+      "commandLineArgs": "-D D:\\Books -F testfile.txt -S -T -R -W lazy"
       //"commandLineArgs": "-D D:\\Books -R -W the"
       //"commandLineArgs": "-h"
       //"commandLineArgs": "xvdsg cgfh fgfdh"

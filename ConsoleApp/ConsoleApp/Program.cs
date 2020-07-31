@@ -1,4 +1,4 @@
-﻿using ConsoleApp.Instant;
+﻿using ConsoleApp.InputWorkers;
 using ConsoleApp.Statics;
 using PowerArgs;
 using System;
@@ -27,23 +27,15 @@ namespace ConsoleApp
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ArgUsage.GenerateUsageFromTemplate<MyArgs>());
             }
-            
-            Menu.Process(parsed);
+
+            try
+            {
+                Processor.Process(parsed);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
     }
-
-
-
-
-
-   
-
-    
-
-
-   
-
-
- 
-    
 }

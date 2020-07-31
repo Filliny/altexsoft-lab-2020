@@ -1,6 +1,6 @@
 ﻿using PowerArgs;
 
-namespace ConsoleApp.Instant
+namespace ConsoleApp.InputWorkers
 {
     [ArgExceptionBehavior(ArgExceptionPolicy.StandardExceptionHandling)]
     class MyArgs
