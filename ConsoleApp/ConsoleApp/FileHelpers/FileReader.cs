@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 
 namespace ConsoleApp.FileHelpers
 {
-    static class FileReader
+    class FileReader
     {
-        public static string ReadFile(string path)
+        protected string ReadFile(string path)
         {
             if (!File.Exists(path))
             {

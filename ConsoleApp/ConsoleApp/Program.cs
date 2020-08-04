@@ -1,5 +1,4 @@
 ﻿using ConsoleApp.InputWorkers;
-using ConsoleApp.Statics;
 using PowerArgs;
 using System;
 
@@ -15,7 +14,8 @@ namespace ConsoleApp
             if (args.Length == 0)
             {
                 Console.WriteLine("You didn't give command line options! ");
-                args = Menu.GetArgs();
+                Menu menuArgs = new Menu();
+                args = menuArgs.GetArgs();
             }
 
             try
@@ -28,9 +28,11 @@ namespace ConsoleApp
                 Console.WriteLine(ArgUsage.GenerateUsageFromTemplate<MyArgs>());
             }
 
+            Processor argsProcessor = new Processor();
+
             try
             {
-                Processor.Process(parsed);
+                argsProcessor.Process(parsed);
             }
             catch (Exception e)
             {

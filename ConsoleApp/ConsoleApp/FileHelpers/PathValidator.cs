@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace ConsoleApp.Instant
+namespace ConsoleApp.FileHelpers
 {
     static class PathValidator //left from earlier validator to help with user input
     {

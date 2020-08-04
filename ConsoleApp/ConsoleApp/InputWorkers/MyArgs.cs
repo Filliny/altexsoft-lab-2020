@@ -3,7 +3,7 @@
 namespace ConsoleApp.InputWorkers
 {
     [ArgExceptionBehavior(ArgExceptionPolicy.StandardExceptionHandling)]
-    class MyArgs
+    public class MyArgs
     {
         [HelpHook, ArgShortcut("-h"), ArgDescription("Shows this help")]
         public bool Help { get; set; }
@@ -23,7 +23,8 @@ namespace ConsoleApp.InputWorkers
         [ArgShortcut("-S"), ArgDescription("Show each ten word in text")]
         public bool ShowTen { get; set; }
 
-        [ArgShortcut("-T"), ArgDescription("Show third reversed sentence in text")]
-        public bool ThirdSentence { get; set; }
+        [ArgShortcut("-T"), ArgDescription("Show reversed sentence in text. Use with number of sentence -N")]
+        public bool ReverseSentence { get; set; }
+
     }
 }

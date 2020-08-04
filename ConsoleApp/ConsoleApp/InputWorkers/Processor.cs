@@ -1,34 +1,37 @@
 ﻿using ConsoleApp.FileHelpers;
 using ConsoleApp.FileProcess;
-using ConsoleApp.InputWorkers;
 
 namespace ConsoleApp.InputWorkers
 {
-    static class Processor
+    class Processor
     {
-        public static void Process(MyArgs args)
+        public void Process(MyArgs args)
         {
             if (args.FilePath != null)
             {
                 if (args.Remove)
                 {
-                    Remover.Remove(args);
+                    Remover textRemover = new Remover();
+                    textRemover.RemoveWord(args);
                 }
 
                 if (args.ShowTen)
                 {
-                    Counter.CountWords(args);
+                    Counter textCounter = new Counter();
+                    textCounter.CountWords(args);
                 }
 
-                if (args.ThirdSentence)
+                if (args.ReverseSentence)
                 {
-                    Reverser.ReverseSentence(args, 2);
+                    Reverser textReverser = new Reverser();
+                    textReverser.ReverseSentence(args, 3);
                 }
             }
 
             if (args.DirPath != null)
             {
-                FileBrowser.ShowContent(args.DirPath, args);
+                FileBrowser browser = new FileBrowser();
+                browser.ShowContent(args.DirPath, args);
             }
         }
     }

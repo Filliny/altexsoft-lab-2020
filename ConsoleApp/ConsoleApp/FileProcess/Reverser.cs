@@ -7,22 +7,22 @@ using ConsoleApp.InputWorkers;
 
 namespace ConsoleApp.FileProcess
 {
-    static class Reverser
+    class Reverser : FileReader
     {
-        public static void ReverseSentence (MyArgs args, int numSent)
+        public void ReverseSentence(MyArgs args, int sentenceNum)
         {
-            
-            string Text = FileReader.ReadFile(args.FilePath);
+            string text = ReadFile(args.FilePath);
 
             string regExpr = @"[A-Za-z](.*?|\n?|\r?)*?[.?!]+(?=\W)";
             string wordExpr = @"\b\w+[-']*\w*\b";
-            var sentences = Regex.Matches(Text, regExpr);
+            var sentences = Regex.Matches(text, regExpr);
 
-            string sentence = sentences[numSent].Value;
+
+            string sentence = sentences[--sentenceNum].Value;
 
             MatchCollection words = Regex.Matches(sentence, wordExpr);
 
-            Console.WriteLine($"\nReversed sentence number {++numSent} :\n");
+            Console.WriteLine($"\nReversed sentence number {++sentenceNum} :\n");
 
             foreach (Match word in words)
             {

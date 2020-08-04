@@ -1,14 +1,13 @@
-﻿using ConsoleApp.Instant;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using ConsoleApp.InputWorkers;
 
 namespace ConsoleApp.FileHelpers
 {
-    static class FileBrowser
+    class FileBrowser : Processor
     {
-        public static void ShowContent(string path, MyArgs args)
+        public void ShowContent(string path, MyArgs args)
         {
             DirectoryInfo dir = new DirectoryInfo(path);
             var root = new DirectoryInfo(path);
@@ -48,13 +47,13 @@ namespace ConsoleApp.FileHelpers
                               "or leave blank to exit:");
             while (true)
             {
-                string ID = Console.ReadLine();
+                string id = Console.ReadLine();
 
-                if (ID == "")
+                if (string.IsNullOrEmpty(id))
                 {
                     return;
                 }
-                else if (ID == "R") //go to parent
+                else if (id == "R") //go to parent
                 {
                     if (dir.Parent != null)
                     {
@@ -67,9 +66,9 @@ namespace ConsoleApp.FileHelpers
                         Console.WriteLine("\nCant go top! Choose another: ");
                     }
                 }
-                else if (dirDictionary.ContainsKey(ID))
+                else if (dirDictionary.ContainsKey(id))
                 {
-                    if (dirDictionary.TryGetValue(ID, out DirectoryInfo takeFoldr))
+                    if (dirDictionary.TryGetValue(id, out DirectoryInfo takeFoldr))
                     {
                         args.DirPath = takeFoldr.FullName;
                         ShowContent(args.DirPath, args);
@@ -77,15 +76,15 @@ namespace ConsoleApp.FileHelpers
 
                     return;
                 }
-                else if (fileDictionary.ContainsKey(ID))
+                else if (fileDictionary.ContainsKey(id))
                 {
-                    if (fileDictionary.TryGetValue(ID, out FileInfo takeFile))
+                    if (fileDictionary.TryGetValue(id, out FileInfo takeFile))
                     {
                         args.FilePath = takeFile.FullName;
                         //args.DirPath = null;
                     }
 
-                    Processor.Process(args);
+                    Process(args);
                     return;
                 }
                 else

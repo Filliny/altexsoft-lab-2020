@@ -1,51 +1,50 @@
-﻿using ConsoleApp.Instant;
+﻿using ConsoleApp.FileHelpers;
 using System;
 using System.IO;
-using ConsoleApp.FileProcess;
 
 
-namespace ConsoleApp.Statics
+namespace ConsoleApp.InputWorkers
 {
-    static class Menu
+    class Menu
     {
-        public static string[] GetArgs()
+        public string[] GetArgs()
         {
-            string[] argums = new string[2];
+            string[] argsManual = new string[2];
 
             Console.Write("Give filename or path to process: ");
 
-            while (!PathValidator.PathTryParse(Console.ReadLine(), ref argums[1]))
+            while (!PathValidator.PathTryParse(Console.ReadLine(), ref argsManual[1]))
             {
                 Console.Write("Wrong path! Give right value: ");
             }
 
 
-            if ((new FileInfo(argums[1]).Attributes & FileAttributes.Directory) == FileAttributes.Directory)
+            if ((new FileInfo(argsManual[1]).Attributes & FileAttributes.Directory) == FileAttributes.Directory)
             {
-                argums[0] = "-D"; //if path is folder stop collecting arguments
+                argsManual[0] = "-D"; //if path is folder stop collecting arguments
             }
             else
             {
-                Array.Resize(ref argums, 3);
-                argums[0] = "-F";
+                Array.Resize(ref argsManual, 3);
+                argsManual[0] = "-F";
 
                 Console.Write("Give file process option :" +
                               "\n1 to remove " +
                               "\n2 for show each ten word" +
                               "\n3 to show each third sentence\n> ");
 
-                while (argums[2] == null)
+                while (argsManual[2] == null)
                 {
                     switch (Console.ReadLine())
                     {
                         case "1":
-                            argums[2] = "-R";
+                            argsManual[2] = "-R";
                             break;
                         case "2":
-                            argums[2] = "-S";
+                            argsManual[2] = "-S";
                             break;
                         case "3":
-                            argums[2] = "-T";
+                            argsManual[2] = "-T";
                             break;
                         default:
                             Console.WriteLine("Choose right number!");
@@ -53,19 +52,18 @@ namespace ConsoleApp.Statics
                     }
                 }
 
-                if (argums[2].Equals("-R"))
+
+                if (argsManual[2].Equals("-R"))
                 {
-                    Array.Resize(ref argums, 5);
-                    argums[3] = "-W";
+                    Array.Resize(ref argsManual, 5);
+                    argsManual[3] = "-W";
                     Console.Write("Give word or char to remove : ");
-                    argums[4] = Console.ReadLine().ToLower();
+                    argsManual[4] = Console.ReadLine()?.ToLower();
                 }
+
             }
 
-            return argums;
+            return argsManual;
         }
-
-       
     }
-
 }
