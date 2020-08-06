@@ -5,33 +5,38 @@ namespace ConsoleApp.InputWorkers
 {
     class Processor
     {
-        public void Process(MyArgs args)
+        public void Process(MyArgs args, ICounter counter, IRemover remover, 
+            IReverser reverser, IFileBrowser browser) //Method injection
         {
-            if (args.FilePath != null)
+            while (true)
             {
-                if (args.Remove)
+                if (args.FilePath != null)
                 {
-                    Remover textRemover = new Remover();
-                    textRemover.RemoveWord(args);
+                    if (args.Remove)
+                    {
+                        remover.RemoveWord(args);
+                    }
+
+                    if (args.ShowTen)
+                    {
+                        counter.CountWords(args);
+                    }
+
+                    if (args.ReverseSentence)
+                    {
+                        reverser.ReverseSentence(args, 3);
+                    }
                 }
 
-                if (args.ShowTen)
+                if (args.DirPath != null)
                 {
-                    Counter textCounter = new Counter();
-                    textCounter.CountWords(args);
+                    if (browser.ShowContent(args.DirPath, args))
+                    {
+                        continue;
+                    }
                 }
 
-                if (args.ReverseSentence)
-                {
-                    Reverser textReverser = new Reverser();
-                    textReverser.ReverseSentence(args, 3);
-                }
-            }
-
-            if (args.DirPath != null)
-            {
-                FileBrowser browser = new FileBrowser();
-                browser.ShowContent(args.DirPath, args);
+                break;
             }
         }
     }

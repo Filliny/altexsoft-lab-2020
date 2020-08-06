@@ -6,7 +6,13 @@ using ConsoleApp.FileHelpers;
 
 namespace ConsoleApp.FileProcess
 {
-    class Counter : FileReader
+    internal interface ICounter
+    {
+        public void CountWords(MyArgs args);
+        string ReadFile(string path);
+    }
+
+    class Counter : FileReader, ICounter
     {
         public void CountWords(MyArgs args)
         {
@@ -17,8 +23,7 @@ namespace ConsoleApp.FileProcess
             Console.WriteLine($"\nThere is {result.Count} words in given text.");
             Console.WriteLine("Every ten word is: ");
 
-
-            var everyTen = result.Where((item, index) => index % 9 == 0)
+            var everyTen = result.Where((item, index) => (index - 9) % 10 == 0)
                 .Select(n => n.Value).ToArray();
 
             Console.Write(String.Join(',', everyTen));

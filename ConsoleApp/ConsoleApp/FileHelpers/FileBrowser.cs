@@ -5,9 +5,16 @@ using ConsoleApp.InputWorkers;
 
 namespace ConsoleApp.FileHelpers
 {
-    class FileBrowser : Processor
+
+    internal interface IFileBrowser
     {
-        public void ShowContent(string path, MyArgs args)
+        //Returns true if file selected, false if none selected for exit
+        bool ShowContent(string path, MyArgs args);
+    }
+
+    class FileBrowser : IFileBrowser
+    {
+        public bool ShowContent(string path, MyArgs args)
         {
             DirectoryInfo dir = new DirectoryInfo(path);
             var root = new DirectoryInfo(path);
@@ -51,15 +58,14 @@ namespace ConsoleApp.FileHelpers
 
                 if (string.IsNullOrEmpty(id))
                 {
-                    return;
+                    return false;
                 }
                 else if (id == "R") //go to parent
                 {
                     if (dir.Parent != null)
                     {
                         args.DirPath = dir.Parent.FullName;
-                        ShowContent(args.DirPath, args);
-                        return;
+                        return ShowContent(args.DirPath, args);
                     }
                     else
                     {
@@ -71,21 +77,17 @@ namespace ConsoleApp.FileHelpers
                     if (dirDictionary.TryGetValue(id, out DirectoryInfo takeFoldr))
                     {
                         args.DirPath = takeFoldr.FullName;
-                        ShowContent(args.DirPath, args);
+                        return ShowContent(args.DirPath, args);
                     }
-
-                    return;
                 }
                 else if (fileDictionary.ContainsKey(id))
                 {
                     if (fileDictionary.TryGetValue(id, out FileInfo takeFile))
                     {
                         args.FilePath = takeFile.FullName;
-                        //args.DirPath = null;
                     }
 
-                    Process(args);
-                    return;
+                    return true;
                 }
                 else
                 {

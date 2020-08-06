@@ -7,7 +7,13 @@ using ConsoleApp.InputWorkers;
 
 namespace ConsoleApp.FileProcess
 {
-    class Reverser : FileReader
+    internal interface IReverser
+    {
+        public void ReverseSentence(MyArgs args, int sentenceNum);
+        string ReadFile(string path);
+    }
+    
+    class Reverser : FileReader, IReverser
     {
         public void ReverseSentence(MyArgs args, int sentenceNum)
         {
@@ -24,13 +30,10 @@ namespace ConsoleApp.FileProcess
 
             Console.WriteLine($"\nReversed sentence number {++sentenceNum} :\n");
 
-            foreach (Match word in words)
-            {
-                Console.Write(new String(word.Value.ToCharArray().Reverse().ToArray()));
-                Console.Write(" ");
-            }
+            string revdSentence = String.Join(" ", words.Select(x =>
+                new String(x.Value.Reverse().ToArray())).ToArray()) + ".";
 
-            Console.Write(".");
+            Console.WriteLine(revdSentence);
         }
     }
 }

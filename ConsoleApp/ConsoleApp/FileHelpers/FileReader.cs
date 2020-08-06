@@ -4,7 +4,7 @@ namespace ConsoleApp.FileHelpers
 {
     class FileReader
     {
-        protected string ReadFile(string path)
+        public string ReadFile(string path)
         {
             if (!File.Exists(path))
             {

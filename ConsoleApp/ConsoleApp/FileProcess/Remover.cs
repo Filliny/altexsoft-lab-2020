@@ -6,7 +6,13 @@ using ConsoleApp.InputWorkers;
 
 namespace ConsoleApp.FileProcess
 {
-    class Remover : FileReader
+    internal interface IRemover
+    {
+        public void RemoveWord(MyArgs args);
+        string ReadFile(string path);
+    }
+
+    class Remover : Counter, IRemover
     {
         public void RemoveWord(MyArgs args)
         {
@@ -14,7 +20,7 @@ namespace ConsoleApp.FileProcess
             string text = ReadFile(args.FilePath);
 
             string savePath = workPath + ".bak"; //save backup
-            File.WriteAllText(savePath, text);
+            File.Copy(args.FilePath, savePath,true);
 
             string regexStr = @"\b(" + args.Word.ToLower() + @")\b";
 

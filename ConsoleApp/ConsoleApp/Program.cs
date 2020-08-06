@@ -1,6 +1,8 @@
 ﻿using ConsoleApp.InputWorkers;
 using PowerArgs;
 using System;
+using ConsoleApp.FileHelpers;
+using ConsoleApp.FileProcess;
 
 
 namespace ConsoleApp
@@ -32,7 +34,8 @@ namespace ConsoleApp
 
             try
             {
-                argsProcessor.Process(parsed);
+                argsProcessor.Process(parsed,new Counter(), 
+                    new Remover(), new Reverser(), new FileBrowser());
             }
             catch (Exception e)
             {
