@@ -9,10 +9,9 @@ namespace ConsoleApp.FileProcess
     internal interface IRemover
     {
         public void RemoveWord(MyArgs args);
-        string ReadFile(string path);
     }
 
-    class Remover : Counter, IRemover
+    class Remover : FileReader, IRemover
     {
         public void RemoveWord(MyArgs args)
         {

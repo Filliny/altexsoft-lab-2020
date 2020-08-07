@@ -2,7 +2,7 @@
 
 namespace ConsoleApp.FileHelpers
 {
-    class FileReader
+    class FileReader 
     {
         public string ReadFile(string path)
         {

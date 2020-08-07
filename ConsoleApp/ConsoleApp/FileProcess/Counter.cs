@@ -9,7 +9,7 @@ namespace ConsoleApp.FileProcess
     internal interface ICounter
     {
         public void CountWords(MyArgs args);
-        string ReadFile(string path);
+       
     }
 
     class Counter : FileReader, ICounter

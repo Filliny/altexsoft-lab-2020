@@ -10,7 +10,6 @@ namespace ConsoleApp.FileProcess
     internal interface IReverser
     {
         public void ReverseSentence(MyArgs args, int sentenceNum);
-        string ReadFile(string path);
     }
     
     class Reverser : FileReader, IReverser
