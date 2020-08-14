@@ -1,0 +1,75 @@
+﻿using Newtonsoft.Json;
+
+using System.Collections.Generic;
+
+namespace Recipes.Models
+{
+
+    public interface ICategory
+    {
+
+        bool Visible { get; set; }
+        bool Active { get; set; }
+        public int Id { get; set; }
+        string Name { get; set; }
+        List<ICategory> GetChildren();
+        ICategory GetParent();
+        void SetParent(ICategory parent);
+
+    }
+
+    public class Category : ICategory
+    {
+
+        [JsonIgnore]
+        public virtual bool Visible { get; set; } = false;
+
+        [JsonIgnore]
+        public bool Active { get; set; }
+
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        public Category ParentCategory { get; set; }
+        public IList<Category> ChildrenCategories { get; set; }
+
+        public Category()
+        {
+            ChildrenCategories = new List<Category>();
+        }
+
+        //Cos we cant use interface types in properties due JsonConverter limitations
+        public List<ICategory> GetChildren()
+        {
+            List<ICategory> result = new List<ICategory>();
+
+            foreach (var category in ChildrenCategories)
+            {
+                result.Add(category);
+            }
+
+            return result;
+        }
+
+        public ICategory GetParent()
+        {
+            return ParentCategory;
+        }
+
+        public void SetParent(ICategory parent)
+        {
+            ParentCategory = (Category) parent;
+        }
+
+    }
+
+    public class Categories : IDataserializable
+    {
+
+        public string DbFilename { get; } = "Categories.json";
+
+        public Category RootCategory { get; set; }
+
+    }
+
+}
