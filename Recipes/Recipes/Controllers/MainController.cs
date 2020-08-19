@@ -1,9 +1,8 @@
 ﻿using Recipes.DbHandler;
+using Recipes.Models;
 using Recipes.Navigation;
 using Recipes.Views;
-using System;
-
-using Recipes.Models;
+using Action = Recipes.Navigation.Action;
 
 namespace Recipes.Controllers
 {
@@ -13,73 +12,70 @@ namespace Recipes.Controllers
 
         public void Run()
         {
-            DbController Storage = new DbController();
-            Storage.ReadTables(new DbReader());
+            Settings appSettings = new Settings();
 
+            DbController storage = new DbController();
+            storage.ReadTables(new DbReader());
+
+            TopView topView = new TopView(appSettings);
             TreeNavigator treeNavigator = new TreeNavigator();
-          
             ItemsNavigator listItemsNavigator = new ItemsNavigator();
-            TopView topView = new TopView();
+            
 
             while (true)
             {
+
                 topView.ShowMenu(string.Empty);
                 RecipesSelector recipesSelector = new RecipesSelector();
 
-                ICategory mainMenuItem = treeNavigator.Navigate(Storage.TopMenu, new SimpleReader(), 
-                    new TreeView(), true, 1, 14);
+                ICategory mainMenuItem = treeNavigator.Navigate(storage.TopMenu, new SimpleReader(),
+                    new TreeView(appSettings), appSettings.AutoexpTree);
 
-                if (mainMenuItem.Id == 0 ) //working with recipes
+                if (mainMenuItem.Id == 0) //working with recipes
                 {
-                    ICategory recipeCategory = treeNavigator.Navigate(Storage.RecipesTree.RootCategory, new ArrowsReader(), 
-                        new TreeView(), true, 3, 18);
+                    ICategory recipeCategory = treeNavigator.Navigate(storage.RecipesTree.RootCategory,
+                        new ArrowsReader(),
+                        new TreeView(appSettings), appSettings.AutoexpTree);
 
                     if (recipeCategory != null)
                     {
+
                         topView.ShowMenu(recipeCategory.Name);
-                        var recipesIn = recipesSelector.SelectRecipes(recipeCategory, Storage.RecipesDb.Storage);
+                        var recipesIn = recipesSelector.SelectRecipes(recipeCategory, storage.RecipesDb.Storage);
 
                         var recipeChosen =
-                            listItemsNavigator.Navigate(recipesIn, new ArrowsReader(), new ItemsView(), 2);
+                            listItemsNavigator.Navigate(recipesIn, new ArrowsReader(), new ItemsView(appSettings), out var action);
 
-                        //if(recipeChosen)
+                        if (recipeChosen == null && action == Action.Create)
+                        {
+                            topView.ShowMenu(string.Empty);
 
+                            RecipeCreateController creator = new RecipeCreateController();
+
+                            creator.CreateRecipe(recipeCategory, storage.RecipesDb, new RecipeCreatorView(),
+                                new DbWriter());
+                        }
 
                     }
-
 
                 }
                 else if (mainMenuItem.Id == 1) //working with ingredients
                 {
-                    
+                    topView.ShowMenu(mainMenuItem.Name);
+
+                    var ingerdientChosen = listItemsNavigator.Navigate(storage.IngredientsDb.GetListables(),
+                        new ArrowsReader(), new ItemsView(appSettings), out var action);
+
+                    if (ingerdientChosen == null && action == Action.Create)
+                    {
+                        topView.ShowMenu(string.Empty);
+
+
+                    }
+
                 }
 
-                
-
-
-
-
-
-
-
-
-
             }
-
-             //var sel = nav.Navigate(Storage.TopMenu, new SimpleReader(), new TreeView(), true, 1, 14);
-
-            //Console.WriteLine(File.ReadAllText("Recipes.json"));
-
-            //var selected = nav.Navigate(Storage.RecipesTree.RootCategory, new ArrowsReader(), new TreeView(), true, 3, 18);
-
-            //RecipesSelector selector = new RecipesSelector();
-            
-
-
-            // ItemsNavigator inav = new ItemsNavigator();
-            // inav.Navigate(res, new ArrowsReader(), new ItemsView(),2);
-
-
 
         }
 

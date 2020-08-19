@@ -1,5 +1,4 @@
 ﻿using Recipes.Controllers;
-using Recipes.Models;
 using System;
 
 namespace Recipes

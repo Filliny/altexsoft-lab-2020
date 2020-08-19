@@ -6,17 +6,19 @@ namespace Recipes.Navigation
 
     class TreeNavigator
     {
-
-        // Cos we have no parent categories pointer in children categories - all tree parens fill during navigation
+        //For Category tree and ICategory related types navigate and display
+        // Cos we have no parent categories pointer in children categories - all tree parents fill during navigation
         public ICategory Navigate(ICategory tree, IKeyReader reader, ITreePrinter printer,
-            bool autoExpandChildren, int posX, int fieldWidth)
+            bool autoExpandChildren)
         {
             ICategory currentCategory = tree;
             ICategory parent = null;
             int horizontal = 0;
+            tree.Active = true; //Highlight root category
+
 
             currentCategory.Visible = true;
-            printer.PrintTree(tree, posX, fieldWidth);
+            printer.PrintTree(tree);
 
             while (true)
             {
@@ -24,34 +26,30 @@ namespace Recipes.Navigation
 
                 if (destination == Destination.MoveDown)
                 {
-                    if (currentCategory.GetParent() == null) // if top category
+                    if (currentCategory.GetParent() == null) // if top category move down opens childs
                     {
                         foreach (ICategory childCat in currentCategory.GetChildren())
                         {
                             childCat.Visible = true;
                         }
 
-                        parent         = currentCategory;
+                        parent          = currentCategory;
                         currentCategory = currentCategory.GetChildren()[horizontal];
-                        // currentCategory.SetParent(parent);
-                        // ActivateCategory(currentCategory, autoExpandChildren);
 
                     }
                     else
                     {
                         DeactivateCategory(currentCategory, autoExpandChildren);
 
-                        if (parent != null && parent.GetChildren().Count > horizontal + 1)
+                        if (parent != null && parent.GetChildren().Count > horizontal + 1) //can we move down?
                         {
                             horizontal++;
                             currentCategory = parent.GetChildren()[horizontal];
-                            // ActivateCategory(currentCategory, autoExpandChildren);//
-                            // currentCategory.SetParent(parent);//
-
                         }
                     }
 
                 }
+
                 else if (destination == Destination.MoveUp)
                 {
                     DeactivateCategory(currentCategory, autoExpandChildren);
@@ -61,32 +59,30 @@ namespace Recipes.Navigation
                         horizontal--;
 
                         if (parent != null) currentCategory = parent.GetChildren()[horizontal];
-                        // ActivateCategory(currentCategory, autoExpandChildren);
-                        // currentCategory.SetParent(parent);
+
                     }
 
                 }
+
                 else if (destination == Destination.MoveRight)
                 {
                     DeactivateCategory(currentCategory, autoExpandChildren);
 
                     if (currentCategory.GetChildren().Count != 0)
                     {
-
                         foreach (ICategory childCat in currentCategory.GetChildren())
                         {
                             childCat.Visible = true;
                         }
 
-                        horizontal     = 0;
-                        parent         = currentCategory;
+                        horizontal      = 0;
+                        parent          = currentCategory;
                         currentCategory = currentCategory.GetChildren()[horizontal];
-                        // currentCategory.SetParent(parent);
-                        // ActivateCategory(currentCategory, autoExpandChildren);
 
                     }
 
                 }
+
                 else if (destination == Destination.MoveLeft)
                 {
 
@@ -104,23 +100,21 @@ namespace Recipes.Navigation
                             currentCategory = currentCategory.GetParent();
                         }
 
-                        parent         = currentCategory.GetParent();
-                        //ActivateCategory(currentCategory, autoExpandChildren);
-
+                        parent = currentCategory.GetParent();
                         if (parent != null) horizontal = parent.GetChildren().IndexOf(currentCategory);
 
                     }
                 }
                 else if (destination == Destination.Select)
                 {
-                    currentCategory.Active = false;
-                    tree.Active = true;
+                    ResetActive(tree,currentCategory);
                     return currentCategory;
                 }
                 else if (destination == Destination.Esc)
                 {
+                    ResetActive(tree, currentCategory);
                     HideAllCategories(tree);
-                    printer.ClearView(tree, posX, fieldWidth);
+                    printer.ClearView(tree);
 
                     return null;
 
@@ -129,8 +123,8 @@ namespace Recipes.Navigation
                 currentCategory.SetParent(parent);
                 ActivateCategory(currentCategory, autoExpandChildren);
 
-                printer.ClearView(tree, posX, fieldWidth);
-                printer.PrintTree(tree, posX, fieldWidth);
+                printer.ClearView(tree);
+                printer.PrintTree(tree);
 
             }
         }
@@ -162,7 +156,7 @@ namespace Recipes.Navigation
             }
         }
 
-        public void HideAllCategories(ICategory treeRoot) 
+        void HideAllCategories(ICategory treeRoot)
         {
             treeRoot.Visible = false;
 
@@ -174,6 +168,13 @@ namespace Recipes.Navigation
 
         }
 
+        void ResetActive(ICategory rootTree, ICategory currentCategory)
+        {
+            currentCategory.Active = false;
+            rootTree.Active        = true;
+        }
     }
 
+
+    
 }

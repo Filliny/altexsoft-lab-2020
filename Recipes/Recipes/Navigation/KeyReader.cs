@@ -5,21 +5,9 @@ using System.Text;
 namespace Recipes.Navigation
 {
 
-    enum Destination
-    {
-        MoveUp,
-        MoveDown,
-        MoveLeft,
-        MoveRight,
-        Select,
-        Esc
-    }
-
     internal interface IKeyReader
     {
-
         Destination GetDestination();
-
     }
 
     class ArrowsReader : IKeyReader
@@ -28,7 +16,6 @@ namespace Recipes.Navigation
         public Destination GetDestination()
         {
 
-            //Console.WriteLine("Navigate by arrows:");
             while (true)
             {
                 Console.SetCursorPosition(0, 4);
@@ -49,6 +36,8 @@ namespace Recipes.Navigation
                         return Destination.Select;
                     case ConsoleKey.Escape:
                         return Destination.Esc;
+                    case ConsoleKey.Insert:
+                        return Destination.Create;
                 }
             }
         }

@@ -8,31 +8,49 @@ namespace Recipes.Views
     class ItemsView
     {
 
-        public void ShowItems(IList<IListable> selectedList, int columnsNum)
+        private  IViewSettings Settings { get; }
+
+        public ItemsView(IViewSettings settings)
         {
-            Console.SetCursorPosition(1, 4);
-            
-            int rowWidth = Console.WindowWidth / (columnsNum+1);
-            int rowsInCol = (selectedList.Count-(selectedList.Count % columnsNum))/(columnsNum ) ;
+            Settings = settings;
+        }
+
+        //Display list in chosen number of rows 
+        public void ShowItems(IList<IListable> selectedList)
+        {
+            //Console.SetCursorPosition(1, 4);
+
+            int rowWidth = Console.WindowWidth / (Settings.ListColumns + 1); //calculate row width from current window size
+
+            int rowsInCol =
+                (selectedList.Count - (selectedList.Count % Settings.ListColumns)) / (Settings.ListColumns); //get rows for each column
 
             foreach (var item in selectedList)
             {
-                int index = selectedList.IndexOf(item);
-                int column =(int) Math.Ceiling((decimal)(selectedList.IndexOf(item) / rowsInCol)) ;
-                int row = selectedList.IndexOf(item) - (rowsInCol *column) + 4;
+                int column =
+                    (int) Math.Ceiling((decimal) (selectedList.IndexOf(item) / rowsInCol)); //get column from item index
+                int row = selectedList.IndexOf(item) - (rowsInCol * column) + Settings.ListStartRow; //get row by index & column
                 Console.WriteLine(" ");
-                Console.SetCursorPosition(column * rowWidth + 5, row);
+                Console.SetCursorPosition(column * rowWidth + Settings.ListRowOffset, row);
 
                 if (item.Active)
                 {
                     Console.BackgroundColor = ConsoleColor.DarkYellow;
                 }
 
-                //Console.WriteLine(" ");
-                Console.WriteLine(" " + item.Name);
+                Console.WriteLine(" " + item.Name+"  ");
                 Console.BackgroundColor = ConsoleColor.Black;
 
             }
+
+
+            int lastLine = Console.WindowHeight - 3;
+            Console.SetCursorPosition(0,lastLine);
+            Console.WriteLine("    Используйте клавиши ↑↓ для навигации, Enter для выбора,\n" +
+                              "    Esc для возврата в основное меню,\n" +
+                              "    Insert чтобы создать новый элемент в этой категории.");
+
+            Console.SetCursorPosition(0, 0);
         }
 
     }

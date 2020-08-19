@@ -3,29 +3,17 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 
-using Newtonsoft.Json;
-
 namespace Recipes.Models
 {
 
-    public interface IListable
-    {
-
-        int Id { get; set; }
-        string Name { get; set; }
-
-        [JsonIgnore]
-        bool Active { get; set; }
-
-    }
-
     public class Recipe : IListable
     {
+
         public int Id { get; set; }
         public string Name { get; set; }
         public int CategoryId { get; set; }
         public bool Active { get; set; }
-        
+
         public string Explanation { get; set; }
 
         public List<int> IngredientsId { get; set; }
@@ -36,11 +24,19 @@ namespace Recipes.Models
         {
             IngredientsId = new List<int>();
         }
-        
+
+        public int CompareTo(object? obj)
+        {
+
+            Recipe other = (Recipe) obj;
+
+            return string.Compare(this.Name, other.Name, StringComparison.CurrentCulture);
+
+        }
+
     }
 
-
-    public class RecipesList: IDataserializable
+    public class RecipesList : IDataserializable
     {
 
         public string DbFilename { get; } = "Recipes.json";
@@ -52,4 +48,5 @@ namespace Recipes.Models
         }
 
     }
+
 }

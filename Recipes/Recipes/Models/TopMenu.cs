@@ -9,7 +9,7 @@ namespace Recipes.Models
         public bool Active { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
-
+        public int Position { get; set; }
         TopMenu ParentCategory { get; set; }
 
         public IList<TopMenu> ChildrenCategories { get; set; }

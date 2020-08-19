@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Text;
-
-using Recipes.DbHandler;
-
-namespace Recipes.Models
+﻿namespace Recipes.Models
 {
+    //Serializing class must have file name property 
     public interface IDataserializable 
     {
         string DbFilename { get; }

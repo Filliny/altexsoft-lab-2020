@@ -1,16 +1,16 @@
-﻿using Recipes.Models;
+﻿using System;
+
+using Recipes.Models;
 using Recipes.Views;
 using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Recipes.Navigation
 {
 
     class ItemsNavigator
     {
-        public IListable SelectedItem { get; }
-
-        public IListable Navigate(IList<IListable> recipes, IKeyReader reader, ItemsView printer, int columnsNum)
+        //Nagigate by list of items. Returns  selected item or null if selected other action 
+        public IListable Navigate(IList<IListable> recipes, IKeyReader reader, ItemsView printer, out Action action  )
         {
             int index = 0;
 
@@ -18,7 +18,7 @@ namespace Recipes.Navigation
             {
 
                 recipes[index].Active = true;
-                printer.ShowItems(recipes, columnsNum);
+                printer.ShowItems(recipes);
 
                 while (true)
                 {
@@ -65,17 +65,33 @@ namespace Recipes.Navigation
                     else if (destination == Destination.Select)
                     {
                         recipes[index].Active = false;
-                        return recipes[index];
-                    }
 
-                    printer.ShowItems(recipes, columnsNum);
+                        action = Action.None;
+                        return recipes[index];
+
+                    }
+                    else if(destination == Destination.Esc)
+                    {
+                        recipes[index].Active = false;
+                        action = Action.None;
+                        return null;
+
+                    }
+                    else if (destination == Destination.Create)
+                    {
+                        recipes[index].Active = false;
+                        action                = Action.Create;
+                        return null;
+                    }
+                    printer.ShowItems(recipes);
                 }
-                
+
             }
 
+            action = Action.None;
             return null;
         }
-        
+
     }
 
 }

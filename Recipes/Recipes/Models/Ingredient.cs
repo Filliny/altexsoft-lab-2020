@@ -14,6 +14,10 @@ namespace Recipes.Models
         public bool Active { get; set; }
         public Measurements Measure { get; set; }
 
+        public int CompareTo(object obj)
+        {
+            throw new NotImplementedException();
+        }
 
     }
 
@@ -28,6 +32,17 @@ namespace Recipes.Models
             IngredientsList = new List<Ingredient>();
         }
 
+        public IList<IListable> GetListables()
+        {
+            IList<IListable> result = new List<IListable>();
+
+            foreach (var ingredient in IngredientsList)
+            {
+                result.Add(ingredient);
+            }
+
+            return result;
+        }
     }
 
 }

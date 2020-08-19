@@ -1,22 +1,8 @@
 ﻿using Newtonsoft.Json;
-
 using System.Collections.Generic;
 
 namespace Recipes.Models
 {
-
-    public interface ICategory
-    {
-
-        bool Visible { get; set; }
-        bool Active { get; set; }
-        public int Id { get; set; }
-        string Name { get; set; }
-        List<ICategory> GetChildren();
-        ICategory GetParent();
-        void SetParent(ICategory parent);
-
-    }
 
     public class Category : ICategory
     {
@@ -29,7 +15,7 @@ namespace Recipes.Models
 
         public int Id { get; set; }
         public string Name { get; set; }
-
+        public int Position { get; set; }
         public Category ParentCategory { get; set; }
         public IList<Category> ChildrenCategories { get; set; }
 

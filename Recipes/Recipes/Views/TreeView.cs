@@ -1,35 +1,38 @@
 ﻿using Recipes.Models;
-using System;
 
+using System;
 
 namespace Recipes.Views
 {
 
     internal interface ITreePrinter
     {
-        void PrintTree(ICategory rootCat, int posX, int sizeOfCell);
-        void ClearView(ICategory cat, int row, int width, int col = 0);
+
+        void PrintTree(ICategory rootCat);
+        void ClearView(ICategory rootCat, int col = 0);
 
     }
 
     class TreeView : ITreePrinter
     {
 
-        public void PrintTree(ICategory rootCat, int posX, int sizeOfCell)
+        private IViewSettings Settings { get; }
+        public TreeView(IViewSettings settings)
         {
-           
+            Settings = settings;
+        }
+
+        public void PrintTree(ICategory rootCat )
+        {
             if (rootCat.GetChildren() != null)
             {
-                
-                PrintVisible(rootCat,0,posX, sizeOfCell);
+                PrintVisible(rootCat, 0, rootCat.Position);
             }
         }
 
-      
-
-        void PrintVisible(ICategory cat, int col,int row, int width)
+        void PrintVisible(ICategory cat, int col,int row)
         {
-            Console.SetCursorPosition(col,row);
+            Console.SetCursorPosition(col, row);
             Console.BackgroundColor = ConsoleColor.Blue;
 
             if (cat.Visible)
@@ -39,19 +42,20 @@ namespace Recipes.Views
                     Console.BackgroundColor = ConsoleColor.DarkYellow;
 
                 }
+
                 Console.Write(" " + cat.Name);
 
-                for (int i = 0; i < (width - cat.Name.Length - 1); i++) //to fill empty place to desired width
+                for (int i = 0; i < (Settings.TreeCellWidth - cat.Name.Length - 1); i++) //to fill empty place to desired width
                 {
                     Console.Write(" ");
                 }
 
                 Console.BackgroundColor = ConsoleColor.Blue;
             }
-          
+
             foreach (ICategory category in cat.GetChildren())
             {
-                PrintVisible(category,col+width, row, width );
+                PrintVisible(category, col + Settings.TreeCellWidth, row);
                 row++;
             }
 
@@ -59,31 +63,35 @@ namespace Recipes.Views
             Console.BackgroundColor = ConsoleColor.Black;
         }
 
-        public void ClearView(ICategory cat, int row, int width, int col = 0)
+        //Called before reprinting tree cos we don't call Console.clear
+        public void ClearView(ICategory rootCat, int col = 0)
+        {
+            PrintInvisible(rootCat,rootCat.Position);
+        }
+
+
+        public void PrintInvisible(ICategory cat, int row , int col = 0)
         {
             Console.SetCursorPosition(col, row);
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Black;
 
-            // if (cat.Visible)
-            // {
+            Console.Write(" " + cat.Name);
 
-                Console.Write(" " + cat.Name);
-
-                for (int i = 0; i < (width - cat.Name.Length - 1); i++) //to fill empty place to desired width
-                {
-                    Console.Write(" ");
-                }
-
-            // }
+            for (int i = 0; i < (Settings.TreeCellWidth - cat.Name.Length - 1); i++) //to fill empty place to desired width
+            {
+                Console.Write(" ");
+            }
 
             foreach (ICategory category in cat.GetChildren())
             {
-                ClearView(category, row, width, col + width);
+                PrintInvisible(category, row, col + Settings.TreeCellWidth);
                 row++;
             }
 
             Console.ForegroundColor = ConsoleColor.White;
         }
+
     }
+
 }
