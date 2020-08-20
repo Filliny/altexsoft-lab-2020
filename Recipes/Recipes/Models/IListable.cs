@@ -14,6 +14,9 @@ namespace Recipes.Models
         [JsonIgnore]
         bool Active { get; set; }
 
+        [JsonIgnore]
+        bool Selected { get; set; }
+
     }
 
 }

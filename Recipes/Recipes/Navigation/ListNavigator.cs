@@ -1,28 +1,48 @@
-﻿using System;
-
-using Recipes.Models;
+﻿using Recipes.Models;
 using Recipes.Views;
+
 using System.Collections.Generic;
 
 namespace Recipes.Navigation
 {
 
-    class ItemsNavigator
+    internal interface IListNavigator
     {
-        //Nagigate by list of items. Returns  selected item or null if selected other action 
-        public IListable Navigate(IList<IListable> recipes, IKeyReader reader, ItemsView printer, out Action action  )
+
+        IListable Navigate(IList<IListable> recipes, out Action action, bool selectable);
+
+    }
+
+    class ListNavigator : IListNavigator
+    {
+        private IKeyReader KeyReader { get; set; }
+
+        private IItemsView Printer { get; set; }
+
+        public ListNavigator(IKeyReader keyReader, IItemsView printer)
         {
+            KeyReader = keyReader;
+            Printer = printer;
+        }
+
+
+        //Navigate by list of items. Returns  selected item or null if selected other action 
+        public IListable Navigate(IList<IListable> recipes,  out Action action, bool selectable)
+        {
+            List<IListable> sortedList = (List<IListable>)recipes;
+            sortedList.Sort();
+
             int index = 0;
 
             if (recipes.Count != 0)
             {
 
                 recipes[index].Active = true;
-                printer.ShowItems(recipes);
+                Printer.ShowItems(recipes,selectable);
 
                 while (true)
                 {
-                    Destination destination = reader.GetDestination();
+                    Destination destination = KeyReader.GetDestination();
 
                     if (destination == Destination.MoveDown)
                     {
@@ -66,14 +86,23 @@ namespace Recipes.Navigation
                     {
                         recipes[index].Active = false;
 
-                        action = Action.None;
+                        action = Action.Select;
+
                         return recipes[index];
 
                     }
-                    else if(destination == Destination.Esc)
+                    else if (destination == Destination.Mark && selectable)
+                    {
+                        recipes[index].Selected = recipes[index].Selected != true;
+
+                        action = Action.Select;
+
+                    }
+                    else if (destination == Destination.Esc)
                     {
                         recipes[index].Active = false;
-                        action = Action.None;
+                        action                = Action.Esc;
+
                         return null;
 
                     }
@@ -81,14 +110,17 @@ namespace Recipes.Navigation
                     {
                         recipes[index].Active = false;
                         action                = Action.Create;
+
                         return null;
                     }
-                    printer.ShowItems(recipes);
+
+                    Printer.ShowItems(recipes,selectable);
                 }
 
             }
 
             action = Action.None;
+
             return null;
         }
 

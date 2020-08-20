@@ -13,16 +13,18 @@ namespace Recipes.Models
         public string Name { get; set; }
         public int CategoryId { get; set; }
         public bool Active { get; set; }
+        public bool Selected { get; set; }
 
         public string Explanation { get; set; }
 
-        public List<int> IngredientsId { get; set; }
+        public Dictionary<int,decimal> IngredientsId { get; set; }
 
-        public string[] Steps { get; set; }
+        public List<string> Steps { get; set; }
 
         public Recipe()
         {
-            IngredientsId = new List<int>();
+            IngredientsId = new Dictionary<int, decimal>();
+            Steps = new List<string>();
         }
 
         public int CompareTo(object? obj)

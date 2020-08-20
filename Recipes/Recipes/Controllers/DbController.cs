@@ -4,7 +4,19 @@ using Recipes.Models;
 namespace Recipes.Controllers
 {
     //Read  and holds all data tables 
-    public class DbController
+    public interface IDbController
+    {
+
+        Categories RecipesTree { get; set; }
+        Ingredients IngredientsDb { get; set; }
+        RecipesList RecipesDb { get; set; }
+        TopMenu TopMenu { get; set; }
+
+        void ReadTables(IDbReader dbReader);
+
+    }
+
+    public class DbController : IDbController
     {
         
         public Categories RecipesTree { get; set; }

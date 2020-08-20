@@ -32,6 +32,7 @@ namespace Recipes.DbHandler
             //Selected.Sort((x,y)=>String.Compare(x.Name,y.Name,StringComparison.CurrentCulture));
             //moved IComparer to interface
             Selected.Sort();
+
             return Selected;
         }
 

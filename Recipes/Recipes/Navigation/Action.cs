@@ -10,6 +10,8 @@ namespace Recipes.Navigation
 
         Create,
         Remove,
+        Select,
+        Esc,
         None
 
     }

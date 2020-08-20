@@ -38,6 +38,8 @@ namespace Recipes.Navigation
                         return Destination.Esc;
                     case ConsoleKey.Insert:
                         return Destination.Create;
+                    case ConsoleKey.Spacebar:
+                        return Destination.Mark;
                 }
             }
         }
@@ -63,6 +65,8 @@ namespace Recipes.Navigation
                         return Destination.MoveRight;
                     case ConsoleKey.Enter:
                         return Destination.Select;
+                    case ConsoleKey.Q:
+                        return Destination.Esc;
                 }
             }
         }

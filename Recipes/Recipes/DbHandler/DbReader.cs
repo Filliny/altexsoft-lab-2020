@@ -2,7 +2,6 @@
 using Recipes.Models;
 using System;
 using System.IO;
-using System.Linq;
 
 namespace Recipes.DbHandler
 {
@@ -16,26 +15,6 @@ namespace Recipes.DbHandler
 
     class DbReader : IDbReader
     {
-
-        public void GetDataTypes()
-        {
-            var type = typeof(IDataserializable);
-
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(s => s.GetTypes())
-                .Where(p => type.IsAssignableFrom(p));
-
-            foreach (var VARIABLE in types)
-            {
-
-                if (!VARIABLE.IsInterface)
-                {
-                    var TypeofInstance = Activator.CreateInstance(VARIABLE);
-                }
-
-            }
-        }
-
 
         public IDataserializable ReadDb<T>()
         {

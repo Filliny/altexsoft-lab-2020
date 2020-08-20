@@ -1,4 +1,6 @@
-﻿using Recipes.DbHandler;
+﻿using System.Collections.Generic;
+
+using Recipes.DbHandler;
 using Recipes.Models;
 using Recipes.Views;
 
@@ -13,12 +15,12 @@ namespace Recipes
             Ingredient ingredient1 = new Ingredient();
             ingredient1.Name         = "Carrot";
             ingredient1.Id = 1;
-            ingredient1.Measure      = Measurements.Grams;
+            ingredient1.Measure      = Measurements.Грамм;
             
             Ingredient ingredient2 = new Ingredient();
             ingredient2.Name         = "Potato";
-            ingredient2.Id = 2;
-            ingredient2.Measure      = Measurements.Grams;
+            ingredient2.Id = 4;
+            ingredient2.Measure      = Measurements.Грамм;
 
             //add to ingred db
             Ingredients ingredients = new Ingredients();
@@ -30,17 +32,17 @@ namespace Recipes
             recipe1.CategoryId = 1;
             recipe1.Name        = "Sate";
             recipe1.Explanation = "dsflhdsklgjhsadkjghkdfashg";
-            recipe1.IngredientsId.Add(1);
-            recipe1.IngredientsId.Add(2);
-            recipe1.Steps = new string[] {"boil potato", "boil carrot"};
+            recipe1.IngredientsId.Add(1,100);
+            recipe1.IngredientsId.Add(4,300);
+            recipe1.Steps = new List<string>() {"boil potato", "boil carrot"};
 
             Recipe recipe2 = new Recipe();
             recipe2.CategoryId = 2;
             recipe2.Name        = "Free";
             recipe2.Explanation = "dsflhdsklgjhsfdg wfewg adkjghkdfashg";
-            recipe2.IngredientsId.Add(1);
-            recipe2.IngredientsId.Add(2);
-            recipe2.Steps = new string[] { "fry potato", "fry carrot" };
+            recipe2.IngredientsId.Add(1,400);
+            recipe2.IngredientsId.Add(4,0.5m);
+            recipe2.Steps = new List<string>() { "fry potato", "fry carrot" };
 
             RecipesList recipesList = new RecipesList();
             recipesList.Storage.Add(recipe1);
@@ -89,7 +91,7 @@ namespace Recipes
             TopMenu chl = new TopMenu();
             chl.Name = "Ингридиенты";
             top.ChildrenCategories.Add(chl);
-            DbWriter.WriteDbFile(top);
+            DbWriter.WriteDbFile(recipesList);
 
 
             // string recipesdDbText = JsonConvert.SerializeObject(recipesList, Formatting.Indented);

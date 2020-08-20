@@ -1,0 +1,29 @@
+{
+  "DbFilename": "topmenu.json",
+  "Visible": true,
+  "Active": true,
+  "Id": 0,
+  "Name": "Рецепты",
+  "Position": 1,
+  "ChildrenCategories": [
+    {
+      "DbFilename": "topmenu.json",
+      "Visible": true,
+      "Active": false,
+      "Id": 1,
+      "Name": "Ингридиенты",
+	  "Position": 1,
+      "ChildrenCategories": [
+	   {
+		  "DbFilename": "topmenu.json",
+		  "Visible": true,
+		  "Active": false,
+		  "Id": 2,
+		  "Name": "Выход",
+		  "Position": 1,
+		  "ChildrenCategories": []
+		}
+	  ]
+    }
+  ]
+}

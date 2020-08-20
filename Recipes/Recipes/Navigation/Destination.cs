@@ -9,6 +9,7 @@
         MoveRight,
         Select,
         Create,
+        Mark,
         Esc
     }
 

@@ -12,30 +12,47 @@ namespace Recipes.Controllers
 
         public void Run()
         {
-            Settings appSettings = new Settings();
+            Settings appSettings = new Settings();                  //init settings  (hardcoded- can be .json too)
 
-            DbController storage = new DbController();
-            storage.ReadTables(new DbReader());
+            DbController storage = new DbController(); 
+            storage.ReadTables(new DbReader());                     //read all tables from files to storage
 
-            TopView topView = new TopView(appSettings);
-            TreeNavigator treeNavigator = new TreeNavigator();
-            ItemsNavigator listItemsNavigator = new ItemsNavigator();
+            ITopView topView = new TopView(appSettings);             //top menu plank view instance 
             
 
+            IKeyReader arrowsFull = new ArrowsReader();             //key reader for categories and lists
+            IKeyReader arrowsSimple = new SimpleReader();           //key reader for main top menu
+
+            ITreePrinter treePrinter = new TreeView(appSettings);   //tree category printer
+            IItemsView listPrinter = new ItemsView(appSettings);    //list items printer
+
+            IDbWriter dbWriter = new DbWriter();
+
+            RecipeView recipeView = new RecipeView(storage,topView);                        //to show selected recipe
+            TreeNavigator treeNavigator = new TreeNavigator();                              //tree navigator
+            ListNavigator listNavigator = new ListNavigator(arrowsFull, listPrinter);       //list navigator
+                               
+                                                                                            //recipes by curr cat id
+
+            IItemChooseView ingredientChooserView = new ItemChooseView(storage);            //view for choose ingredients new recipe 
+            IRecipeCreatorView recipeCreatorView = new RecipeCreatorView(dbWriter,storage); //all recipe creator view
+            IItemCreator itemCreator = new ItemCreator(topView,dbWriter,storage);           //ingredient creator view
+            
             while (true)
             {
 
                 topView.ShowMenu(string.Empty);
-                RecipesSelector recipesSelector = new RecipesSelector();
+                ICategory mainMenuItem = treeNavigator.Navigate(storage.TopMenu, arrowsSimple,
+                    treePrinter, appSettings.AutoexpTree);
 
-                ICategory mainMenuItem = treeNavigator.Navigate(storage.TopMenu, new SimpleReader(),
-                    new TreeView(appSettings), appSettings.AutoexpTree);
+                
 
                 if (mainMenuItem.Id == 0) //working with recipes
                 {
                     ICategory recipeCategory = treeNavigator.Navigate(storage.RecipesTree.RootCategory,
-                        new ArrowsReader(),
-                        new TreeView(appSettings), appSettings.AutoexpTree);
+                        arrowsFull, treePrinter, appSettings.AutoexpTree);
+
+                    RecipesSelector recipesSelector = new RecipesSelector();  //recipes selector for displaying
 
                     if (recipeCategory != null)
                     {
@@ -44,16 +61,25 @@ namespace Recipes.Controllers
                         var recipesIn = recipesSelector.SelectRecipes(recipeCategory, storage.RecipesDb.Storage);
 
                         var recipeChosen =
-                            listItemsNavigator.Navigate(recipesIn, new ArrowsReader(), new ItemsView(appSettings), out var action);
+                            listNavigator.Navigate(recipesIn, out var action,false);
 
                         if (recipeChosen == null && action == Action.Create)
                         {
-                            topView.ShowMenu(string.Empty);
+                            Recipe newRecipe = new Recipe();
 
-                            RecipeCreateController creator = new RecipeCreateController();
+                            topView.ShowMenu($"Категория {recipeCategory.Name} > Новый рецепт . " +
+                                             $"Выберите ингридиенты c помощью Space",true);
 
-                            creator.CreateRecipe(recipeCategory, storage.RecipesDb, new RecipeCreatorView(),
-                                new DbWriter());
+                            var ingredients = ingredientChooserView.Choose( listNavigator, itemCreator);  //Get ingredients 
+
+                            topView.ShowMenu($"Категория {recipeCategory.Name} > Новый рецепт ");
+
+                            recipeCreatorView.FillRecipe(newRecipe, ingredients,recipeCategory);
+
+                        }
+                        if (recipeChosen != null && action == Action.Select)
+                        {
+                            recipeView.ShowRecipe(recipeChosen);
                         }
 
                     }
@@ -61,18 +87,31 @@ namespace Recipes.Controllers
                 }
                 else if (mainMenuItem.Id == 1) //working with ingredients
                 {
-                    topView.ShowMenu(mainMenuItem.Name);
+                    Action action;
 
-                    var ingerdientChosen = listItemsNavigator.Navigate(storage.IngredientsDb.GetListables(),
-                        new ArrowsReader(), new ItemsView(appSettings), out var action);
-
-                    if (ingerdientChosen == null && action == Action.Create)
+                    do
                     {
-                        topView.ShowMenu(string.Empty);
+                        topView.ShowMenu(mainMenuItem.Name);
+                        var ingredientChosen = listNavigator.Navigate(storage.IngredientsDb.GetListables(),
+                            out action, false);
+
+                        if (ingredientChosen == null && action == Action.Create)
+                        {
+                            topView.ShowMenu(string.Empty);
+
+                            itemCreator.Create();
+                        }
 
 
-                    }
+                    } while (action != Action.Esc );
 
+
+                   
+                }else if (mainMenuItem.Id == 2)
+                {
+
+
+                    return;
                 }
 
             }

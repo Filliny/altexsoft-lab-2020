@@ -1,0 +1,68 @@
+{
+  "DbFilename": "Categories.json",
+  "RootCategory": {
+    "Id": 0,
+    "Name": "Все блюда",
+	"Position": 3,
+    "ParentCategory": null,
+    "ChildrenCategories": [
+      {
+        "Id": 1,
+        "Name": "Первые блюда",
+		"Position": 3,
+        "ChildrenCategories": [
+			{
+				"Id": 8,
+				"Name": "Супы",
+				"Position": 3,
+				"ChildrenCategories": []
+			},
+			{
+				"Id": 9,
+				"Name": "Борщи",
+				"Position": 3,
+				"ChildrenCategories": []
+			}
+		]		
+      },
+      {
+        "Id": 2,
+        "Name": "Вторые блюда",
+		"Position": 3,
+        "ChildrenCategories": [
+          {
+            "Id": 4,
+            "Name": "Гарниры",
+			"Position": 3,
+            "ChildrenCategories": []
+          },
+          {
+            "Id": 5,
+            "Name": "Мясные блюда",
+			"Position": 3,
+            "ChildrenCategories": []
+          }
+        ]
+      },
+	  {
+        "Id": 3,
+        "Name": "Десерты",
+		"Position": 3,
+        "ChildrenCategories": [
+          {
+            "Id": 6,
+            "Name": "Выпечка",
+			"Position": 3,
+            "ChildrenCategories": []
+          },
+          {
+            "Id": 7,
+            "Name": "Желе",
+			"Position": 3,
+            "ChildrenCategories": []
+          }
+        ]
+      }
+    ]
+  }
+}

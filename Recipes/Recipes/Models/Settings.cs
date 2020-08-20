@@ -35,5 +35,6 @@ namespace Recipes.Models
         public int ListRowOffset { get; set; } = 5;
         public int ListStartRow { get; set; } = 4;
 
+        
     }
 }

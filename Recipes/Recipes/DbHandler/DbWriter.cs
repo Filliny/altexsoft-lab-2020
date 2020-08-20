@@ -1,15 +1,18 @@
-﻿using System;
-
-using Newtonsoft.Json;
-
+﻿using Newtonsoft.Json;
 using Recipes.Models;
-
 using System.IO;
 
 namespace Recipes.DbHandler
 {
 
-    class DbWriter
+    internal interface IDbWriter
+    {
+
+        void WriteDbFile(IDataserializable savingInstance);
+
+    }
+
+    class DbWriter : IDbWriter
     {
 
         public void WriteDbFile(IDataserializable savingInstance)

@@ -8,12 +8,17 @@ namespace Recipes.Models
     public enum Measurements
     {
 
-        Grams,
-        Kilos,
-        Spoons,
-        Teaspoons,
-        Mere
+        Грамм = 1,
+        Килограмм,
+        Ложек_столовых,
+        Ложек_чайных,
+        Частей,
+        Пучков,
+        Шт,
+        Литров,
+        Миллилитров
 
+        
     }
 
 }
