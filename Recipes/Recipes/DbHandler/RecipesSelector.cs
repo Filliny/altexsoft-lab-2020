@@ -1,10 +1,6 @@
-﻿using System;
-
-using Recipes.Models;
+﻿using Recipes.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Recipes.DbHandler
 {
@@ -19,14 +15,14 @@ namespace Recipes.DbHandler
             Selected = new List<IListable>();
         }
 
-        public IList<IListable> SelectRecipes(ICategory selectedCategory, IList<Recipe> Recipes)
+        public IList<IListable> SelectRecipes(ICategory selectedCategory, IList<Recipe> recipes)
         {
-            var range = from r in Recipes where r.CategoryId == selectedCategory.Id select r;
+            var range = from r in recipes where r.CategoryId == selectedCategory.Id select r;
             Selected.AddRange(range);
 
             foreach (var childCategory in selectedCategory.GetChildren())
             {
-                SelectRecipes(childCategory, Recipes);
+                SelectRecipes(childCategory, recipes);
             }
 
             //Selected.Sort((x,y)=>String.Compare(x.Name,y.Name,StringComparison.CurrentCulture));

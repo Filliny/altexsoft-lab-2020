@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Recipes.Navigation
 {
 
     internal interface IKeyReader
     {
+
         Destination GetDestination();
+
     }
 
     class ArrowsReader : IKeyReader
@@ -43,10 +43,12 @@ namespace Recipes.Navigation
                 }
             }
         }
+
     }
 
     class SimpleReader : IKeyReader
     {
+
         public Destination GetDestination()
         {
 
@@ -56,7 +58,7 @@ namespace Recipes.Navigation
                 Console.SetCursorPosition(0, 4);
                 ConsoleKeyInfo key = Console.ReadKey();
                 Console.Write(" ");
-                
+
                 switch (key.Key)
                 {
                     case ConsoleKey.LeftArrow:
@@ -70,6 +72,7 @@ namespace Recipes.Navigation
                 }
             }
         }
-        
+
     }
+
 }

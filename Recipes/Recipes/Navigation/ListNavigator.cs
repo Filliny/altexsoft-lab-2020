@@ -15,6 +15,7 @@ namespace Recipes.Navigation
 
     class ListNavigator : IListNavigator
     {
+
         private IKeyReader KeyReader { get; set; }
 
         private IItemsView Printer { get; set; }
@@ -22,14 +23,13 @@ namespace Recipes.Navigation
         public ListNavigator(IKeyReader keyReader, IItemsView printer)
         {
             KeyReader = keyReader;
-            Printer = printer;
+            Printer   = printer;
         }
 
-
         //Navigate by list of items. Returns  selected item or null if selected other action 
-        public IListable Navigate(IList<IListable> recipes,  out Action action, bool selectable)
+        public IListable Navigate(IList<IListable> recipes, out Action action, bool selectable)
         {
-            List<IListable> sortedList = (List<IListable>)recipes;
+            List<IListable> sortedList = (List<IListable>) recipes;
             sortedList.Sort();
 
             int index = 0;
@@ -38,7 +38,7 @@ namespace Recipes.Navigation
             {
 
                 recipes[index].Active = true;
-                Printer.ShowItems(recipes,selectable);
+                Printer.ShowItems(recipes, selectable);
 
                 while (true)
                 {
@@ -114,7 +114,7 @@ namespace Recipes.Navigation
                         return null;
                     }
 
-                    Printer.ShowItems(recipes,selectable);
+                    Printer.ShowItems(recipes, selectable);
                 }
 
             }

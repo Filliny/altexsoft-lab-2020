@@ -17,12 +17,13 @@ namespace Recipes.Views
     {
 
         private IViewSettings Settings { get; }
+
         public TreeView(IViewSettings settings)
         {
             Settings = settings;
         }
 
-        public void PrintTree(ICategory rootCat )
+        public void PrintTree(ICategory rootCat)
         {
             if (rootCat.GetChildren() != null)
             {
@@ -30,7 +31,7 @@ namespace Recipes.Views
             }
         }
 
-        void PrintVisible(ICategory cat, int col,int row)
+        void PrintVisible(ICategory cat, int col, int row)
         {
             Console.SetCursorPosition(col, row);
             Console.BackgroundColor = ConsoleColor.Blue;
@@ -45,7 +46,9 @@ namespace Recipes.Views
 
                 Console.Write(" " + cat.Name);
 
-                for (int i = 0; i < (Settings.TreeCellWidth - cat.Name.Length - 1); i++) //to fill empty place to desired width
+                for (int i = 0;
+                    i < (Settings.TreeCellWidth - cat.Name.Length - 1);
+                    i++) //to fill empty place to desired width
                 {
                     Console.Write(" ");
                 }
@@ -66,11 +69,10 @@ namespace Recipes.Views
         //Called before reprinting tree cos we don't call Console.clear
         public void ClearView(ICategory rootCat, int col = 0)
         {
-            PrintInvisible(rootCat,rootCat.Position);
+            PrintInvisible(rootCat, rootCat.Position);
         }
 
-
-        public void PrintInvisible(ICategory cat, int row , int col = 0)
+        public void PrintInvisible(ICategory cat, int row, int col = 0)
         {
             Console.SetCursorPosition(col, row);
             Console.BackgroundColor = ConsoleColor.Black;
@@ -78,7 +80,9 @@ namespace Recipes.Views
 
             Console.Write(" " + cat.Name);
 
-            for (int i = 0; i < (Settings.TreeCellWidth - cat.Name.Length - 1); i++) //to fill empty place to desired width
+            for (int i = 0;
+                i < (Settings.TreeCellWidth - cat.Name.Length - 1);
+                i++) //to fill empty place to desired width
             {
                 Console.Write(" ");
             }

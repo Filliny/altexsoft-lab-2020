@@ -8,9 +8,7 @@ namespace Recipes.DbHandler
 
     public interface IDbReader
     {
-
         IDataserializable ReadDb<T>();
-
     }
 
     class DbReader : IDbReader
@@ -19,13 +17,13 @@ namespace Recipes.DbHandler
         public IDataserializable ReadDb<T>()
         {
             var reqType = typeof(T);
-            
-            IDataserializable reqInstance =  (IDataserializable)Activator.CreateInstance(reqType);
+
+            IDataserializable reqInstance = (IDataserializable) Activator.CreateInstance(reqType);
 
             if (File.Exists(reqInstance.DbFilename))
             {
                 string jsonIn = File.ReadAllText(reqInstance.DbFilename);
-                reqInstance =(IDataserializable) JsonConvert.DeserializeObject<T>(jsonIn);
+                reqInstance = (IDataserializable) JsonConvert.DeserializeObject<T>(jsonIn);
             }
             else
             {

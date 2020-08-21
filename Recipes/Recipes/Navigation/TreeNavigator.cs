@@ -6,6 +6,7 @@ namespace Recipes.Navigation
 
     class TreeNavigator
     {
+
         //For Category tree and ICategory related types navigate and display
         // Cos we have no parent categories pointer in children categories - all tree parents fill during navigation
         public ICategory Navigate(ICategory tree, IKeyReader reader, ITreePrinter printer,
@@ -15,7 +16,6 @@ namespace Recipes.Navigation
             ICategory parent = null;
             int horizontal = 0;
             tree.Active = true; //Highlight root category
-
 
             currentCategory.Visible = true;
             printer.PrintTree(tree);
@@ -107,7 +107,8 @@ namespace Recipes.Navigation
                 }
                 else if (destination == Destination.Select)
                 {
-                    ResetActive(tree,currentCategory);
+                    ResetActive(tree, currentCategory);
+
                     return currentCategory;
                 }
                 else if (destination == Destination.Esc)
@@ -173,8 +174,7 @@ namespace Recipes.Navigation
             currentCategory.Active = false;
             rootTree.Active        = true;
         }
+
     }
 
-
-    
 }

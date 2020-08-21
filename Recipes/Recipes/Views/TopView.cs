@@ -11,7 +11,7 @@ namespace Recipes.Views
         public void ShowMenu();
         void ShowMenu(string menuHead);
         void ShowMenu(string rememberMenuHead, bool remember);
-        
+
     }
 
     class TopView : ITopView
@@ -26,7 +26,7 @@ namespace Recipes.Views
         }
 
         //if called without message - show last remembered
-        public void ShowMenu() 
+        public void ShowMenu()
         {
             ShowMenu(LastHead);
         }
@@ -34,8 +34,8 @@ namespace Recipes.Views
         //if bool remebered = remember message
         public void ShowMenu(string rememberMenuHead, bool remember)
         {
-            if(remember)
-               LastHead = rememberMenuHead;
+            if (remember)
+                LastHead = rememberMenuHead;
 
             ShowMenu(rememberMenuHead);
         }
@@ -64,7 +64,7 @@ namespace Recipes.Views
 
             Console.SetCursorPosition(windowWidth / 2 - Settings.ProgramName.Length / 2, 0);
             Console.WriteLine(Settings.ProgramName);
-            Console.SetCursorPosition(Settings.CategoryPlace.Left,Settings.CategoryPlace.Top);
+            Console.SetCursorPosition(Settings.CategoryPlace.Left, Settings.CategoryPlace.Top);
             Console.WriteLine(menuHead);
             Console.ResetColor();
 

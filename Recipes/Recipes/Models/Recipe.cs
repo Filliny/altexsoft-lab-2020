@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Text;
 
 namespace Recipes.Models
 {
@@ -17,17 +15,17 @@ namespace Recipes.Models
 
         public string Explanation { get; set; }
 
-        public Dictionary<int,decimal> IngredientsId { get; set; }
+        public Dictionary<int, decimal> IngredientsId { get; set; }
 
         public List<string> Steps { get; set; }
 
         public Recipe()
         {
             IngredientsId = new Dictionary<int, decimal>();
-            Steps = new List<string>();
+            Steps         = new List<string>();
         }
 
-        public int CompareTo(object? obj)
+        public int CompareTo(object obj)
         {
 
             Recipe other = (Recipe) obj;

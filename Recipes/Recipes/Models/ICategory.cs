@@ -2,7 +2,8 @@
 
 namespace Recipes.Models
 {
-    //Tree like type for TreeNavigator and TreeView using
+
+    //Tree-like type for TreeNavigator and TreeView using
     public interface ICategory
     {
 

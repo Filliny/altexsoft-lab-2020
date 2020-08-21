@@ -25,7 +25,7 @@ namespace Recipes.Models
 
             foreach (var category in ChildrenCategories)
             {
-                result.Add((ICategory)category);
+                result.Add(category);
             }
 
             return result;
@@ -33,7 +33,7 @@ namespace Recipes.Models
 
         public ICategory GetParent()
         {
-            return (ICategory)ParentCategory;
+            return ParentCategory;
         }
 
         public void SetParent(ICategory parent)

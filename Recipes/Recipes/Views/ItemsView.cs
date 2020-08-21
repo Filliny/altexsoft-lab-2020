@@ -1,7 +1,7 @@
 ﻿using Recipes.Models;
+
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 
 namespace Recipes.Views
 {
@@ -30,10 +30,12 @@ namespace Recipes.Views
         {
             //Console.SetCursorPosition(1, 4);
 
-            int rowWidth = Console.WindowWidth / (Settings.ListColumns + 1); //calculate row width from current window size
+            int rowWidth =
+                Console.WindowWidth / (Settings.ListColumns + 1); //calculate row width from current window size
 
             int rowsInCol =
-                (selectedList.Count - (selectedList.Count % Settings.ListColumns)) / (Settings.ListColumns); //get rows for each column
+                (selectedList.Count - (selectedList.Count % Settings.ListColumns)) /
+                (Settings.ListColumns); //get rows for each column
 
             if (Math.Abs(rowsInCol) < 1) //when there is one recipe in category
                 rowsInCol = 1;
@@ -42,7 +44,9 @@ namespace Recipes.Views
             {
                 int column =
                     (int) Math.Ceiling((decimal) (selectedList.IndexOf(item) / rowsInCol)); //get column from item index
-                int row = selectedList.IndexOf(item) - (rowsInCol * column) + Settings.ListStartRow; //get row by index & column
+
+                int row = selectedList.IndexOf(item) - (rowsInCol * column) +
+                          Settings.ListStartRow; //get row by index & column
                 Console.WriteLine(" ");
                 Console.SetCursorPosition(column * rowWidth + Settings.ListRowOffset, row);
 
@@ -50,31 +54,27 @@ namespace Recipes.Views
                 {
                     Console.BackgroundColor = ConsoleColor.Magenta;
                 }
-                else if(item.Selected)
+                else if (item.Selected)
                 {
                     Console.BackgroundColor = ConsoleColor.Red;
                 }
                 else if (item.Active)
                 {
-                    
+
                     Console.BackgroundColor = ConsoleColor.DarkYellow;
                 }
 
-
-                Console.WriteLine(" " + item.Name+"  ");
+                Console.WriteLine(" " + item.Name + "  ");
                 Console.BackgroundColor = ConsoleColor.Black;
 
             }
 
-
             int lastLine = Console.WindowHeight - 3;
-            Console.SetCursorPosition(0,lastLine);
+            Console.SetCursorPosition(0, lastLine);
             string selectKey = "Enter";
 
             if (selectable)
                 selectKey = "Space";
-          
-
 
             Console.WriteLine($"    Используйте клавиши ↑↓ для навигации, {selectKey} для выбора,\n" +
                               "    Esc для возврата,\n" +

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using Recipes.Controllers;
 using Recipes.Models;
 using Recipes.Navigation;
-
 using Action = Recipes.Navigation.Action;
 
 namespace Recipes.Views

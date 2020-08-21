@@ -1,11 +1,11 @@
 ﻿using System;
-
 using Newtonsoft.Json;
 
 namespace Recipes.Models
 {
+
     //For classes showed in itemsView
-    public interface IListable: IComparable
+    public interface IListable : IComparable
     {
 
         int Id { get; set; }
