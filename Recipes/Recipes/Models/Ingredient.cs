@@ -25,8 +25,8 @@ namespace Recipes.Models
 
     public class Ingredients : IDataserializable
     {
-
-        public string DbFilename { get; } = "Ingredients.json";
+        private static readonly string _filename = "Ingredients.json";
+        public string JsonFileName => _filename;
         public IList<Ingredient> IngredientsList { get; set; }
 
         public Ingredients()

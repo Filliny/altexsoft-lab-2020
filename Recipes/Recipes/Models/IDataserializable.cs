@@ -3,7 +3,7 @@
     //Serializing class must have file name property 
     public interface IDataserializable 
     {
-        string DbFilename { get; }
+        string JsonFileName { get; }
     } 
 
 }

@@ -1,5 +1,5 @@
 ﻿using Recipes.Controllers;
-using Recipes.DbHandler;
+using Recipes.FileHandler;
 using Recipes.Models;
 using System;
 using System.Collections.Generic;
@@ -13,31 +13,30 @@ namespace Recipes.Views
     internal interface IRecipeCreatorView
     {
 
-        bool FillRecipe(Recipe newRecipe, IList<IListable> ingredients, ICategory category);
+        bool FillRecipe(Recipe newRecipe, IList<IListable> selectedIngredients, ICategory category);
 
     }
 
     class RecipeCreatorView : IRecipeCreatorView
     {
 
-        private IDbController Storage { get; }
-        private IDbWriter Writer { get; }
 
-        public RecipeCreatorView(IDbWriter writer, IDbController storage)
+        private IUnitOfWork FileUnit { get; }
+
+        public RecipeCreatorView(IUnitOfWork fileUnit)
         {
-            Writer  = writer;
-            Storage = storage;
+            FileUnit  = fileUnit;
 
         }
 
-        public bool FillRecipe(Recipe newRecipe, IList<IListable> ingredients, ICategory category)
+        public bool FillRecipe(Recipe newRecipe, IList<IListable> selectedIngredients, ICategory category)
         {
             Console.SetCursorPosition(1, 4);
             Console.WriteLine("Укажите количество ингридиентов: \n");
 
-            foreach (var ingredient in ingredients)
+            foreach (var ingredient in selectedIngredients)
             {
-                var realIngr = Storage.IngredientsDb.IngredientsList.First(c => c.Id == ingredient.Id);
+                var realIngr = FileUnit.Ingredients.GetAll().First(c => c.Id == ingredient.Id);
 
                 Console.Write($"{realIngr.Name} количество, {Enum.GetName(typeof(Measurements), realIngr.Measure)} = ");
 
@@ -77,7 +76,7 @@ namespace Recipes.Views
             }
 
             newRecipe.CategoryId = category.Id;
-            var lastId = Storage.RecipesDb.Storage.Max(c => c.Id);
+            var lastId = FileUnit.Recipes.GetAll().Max(c => c.Id);
             newRecipe.Id = ++lastId;
 
             Console.Write("\nСохранить рецепт? Д/Н : ");
@@ -85,11 +84,11 @@ namespace Recipes.Views
 
             if (answer != null && answer.Equals("Д"))
             {
-                Storage.RecipesDb.Storage.Add(newRecipe);
+                FileUnit.Recipes.Create(newRecipe);
 
                 try
                 {
-                    Writer.WriteDbFile(Storage.RecipesDb);
+                    FileUnit.SaveFiles();
                 }
                 catch (Exception e)
                 {

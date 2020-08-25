@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Recipes.Controllers;
+using Recipes.FileHandler;
 using Recipes.Models;
 using Recipes.Navigation;
 using Action = Recipes.Navigation.Action;
@@ -18,11 +19,11 @@ namespace Recipes.Views
     class ItemChooseView : IItemChooseView
     {
 
-        private IDbController Storage { get; }
+        private IStorageContext Storage { get; }
 
-        public ItemChooseView(IDbController storage)
+        public ItemChooseView(IUnitOfWork fileWorker)
         {
-            Storage = storage;
+            Storage = fileWorker.Context;
 
         }
 
@@ -38,7 +39,7 @@ namespace Recipes.Views
 
                 do
                 {
-                    selected = navigator.Navigate(Storage.IngredientsDb.GetListables(), out action, true);
+                    selected = navigator.Navigate(Storage.IngredientsFile.GetListables(), out action, true);
 
                     if (selected == null && action == Action.Create)
                     {
@@ -47,7 +48,7 @@ namespace Recipes.Views
 
                 } while (action != Action.Esc && selected != null);
 
-                foreach (var item in Storage.IngredientsDb.GetListables())
+                foreach (var item in Storage.IngredientsFile.GetListables())
                 {
                     if (item.Selected)
                     {

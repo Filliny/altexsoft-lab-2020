@@ -1,8 +1,9 @@
 ﻿using Recipes.Controllers;
-using Recipes.DbHandler;
+using Recipes.FileHandler;
 using Recipes.Models;
-
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
@@ -19,15 +20,15 @@ namespace Recipes.Views
     class ItemCreator : IItemCreator
     {
 
-        private IDbController Storage { get; }
+        private IRepository<Ingredient> Storage { get; }
         private ITopView TopView { get; }
-        private IDbWriter Writer { get; }
+        private IUnitOfWork Writer { get; }
 
-        public ItemCreator(ITopView topView, IDbWriter writer, IDbController storage)
+        public ItemCreator(ITopView topView, IUnitOfWork writer)
         {
             TopView = topView;
             Writer  = writer;
-            Storage = storage;
+            Storage = writer.Ingredients;
 
         }
 
@@ -79,8 +80,8 @@ namespace Recipes.Views
             } while (!Enum.IsDefined(typeof(Measurements), result));
 
             newIngredient.Measure = result;
-
-            var lastId = Storage.IngredientsDb.IngredientsList.Max(c => c.Id);
+                
+            var lastId = Storage.GetAll().Max(c => c.Id); ;
             newIngredient.Id = ++lastId;
 
             Console.Write("\nСохранить ингредиент? Д/Н : ");
@@ -88,11 +89,11 @@ namespace Recipes.Views
 
             if (answer != null && answer.Equals("Д"))
             {
-                Storage.IngredientsDb.IngredientsList.Add(newIngredient);
+                Storage.Create(newIngredient);
 
                 try
                 {
-                    Writer.WriteDbFile(Storage.IngredientsDb);
+                    Writer.SaveFiles();
                 }
                 catch (Exception e)
                 {

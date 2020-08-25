@@ -4,7 +4,9 @@ namespace Recipes.Models
 {
     public class TopMenu:ICategory,IDataserializable
     {
-        public string DbFilename { get; } = "topmenu.json";
+        private static readonly string _filename = "topmenu.json";
+        public string JsonFileName => _filename;
+
         public bool Visible { get; set; }
         public bool Active { get; set; }
         public int Id { get; set; }

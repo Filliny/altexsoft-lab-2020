@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Recipes.DbHandler
+namespace Recipes.FileHandler
 {
 
     public class RecipesSelector

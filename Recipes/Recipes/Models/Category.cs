@@ -52,9 +52,8 @@ namespace Recipes.Models
 
     public class Categories : IDataserializable
     {
-
-        public string DbFilename { get; } = "Categories.json";
-
+        private static readonly string _filename = "Categories.json";
+        public string JsonFileName => _filename;
         public Category RootCategory { get; set; }
 
     }

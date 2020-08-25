@@ -7,11 +7,11 @@ namespace Recipes.Views
 {
     class RecipeView
     {
-        private IDbController Storage { get; }
+        private IStorageContext Storage { get; }
 
         private ITopView TopView { get; }
 
-        public RecipeView(IDbController storage, ITopView topView)
+        public RecipeView(IStorageContext storage, ITopView topView)
         {
             Storage = storage;
             TopView = topView;
@@ -20,7 +20,7 @@ namespace Recipes.Views
         public void ShowRecipe(IListable recipe)
         {
 
-            var onRecipe = Storage.RecipesDb.Storage.First(c => c.Id == recipe.Id);
+            var onRecipe = Storage.RecipesFile.Storage.First(c => c.Id == recipe.Id);
 
             TopView.ShowMenu(onRecipe.Name);
 
@@ -30,7 +30,7 @@ namespace Recipes.Views
 
             foreach (var ingredientId in onRecipe.IngredientsId)
             {
-                var ingredient = Storage.IngredientsDb.IngredientsList.First(c => c.Id == ingredientId.Key);
+                var ingredient = Storage.IngredientsFile.IngredientsList.First(c => c.Id == ingredientId.Key);
 
                 Console.WriteLine($"{ingredient.Name}  = {ingredientId.Value} {ingredient.Measure}");
             }
