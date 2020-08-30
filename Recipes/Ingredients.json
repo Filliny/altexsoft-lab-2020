@@ -1,5 +1,4 @@
 {
-  "DbFilename": "Ingredients.json",
   "IngredientsList": [
     {
       "Id": 1,
@@ -315,6 +314,11 @@
       "Id": 65,
       "Name": "Вода",
       "Measure": 9
+    },
+    {
+      "Id": 66,
+      "Name": "Колбаса",
+      "Measure": 1
     }
   ]
 }
