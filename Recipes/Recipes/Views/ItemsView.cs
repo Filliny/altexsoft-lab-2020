@@ -1,5 +1,4 @@
 ﻿using Recipes.Models;
-
 using System;
 using System.Collections.Generic;
 
@@ -18,11 +17,11 @@ namespace Recipes.Views
     class ItemsView : IItemsView
     {
 
-        private IViewSettings Settings { get; }
+        private readonly IViewSettings _settings;
 
         public ItemsView(IViewSettings settings)
         {
-            Settings = settings;
+            _settings = settings;
         }
 
         //Display list in chosen number of rows 
@@ -31,11 +30,11 @@ namespace Recipes.Views
             //Console.SetCursorPosition(1, 4);
 
             int rowWidth =
-                Console.WindowWidth / (Settings.ListColumns + 1); //calculate row width from current window size
+                Console.WindowWidth / (_settings.ListColumns + 1); //calculate row width from current window size
 
             int rowsInCol =
-                (selectedList.Count - (selectedList.Count % Settings.ListColumns)) /
-                (Settings.ListColumns); //get rows for each column
+                (selectedList.Count - (selectedList.Count % _settings.ListColumns)) /
+                (_settings.ListColumns); //get rows for each column
 
             if (Math.Abs(rowsInCol) < 1) //when there is one recipe in category
                 rowsInCol = 1;
@@ -46,9 +45,9 @@ namespace Recipes.Views
                     (int) Math.Ceiling((decimal) (selectedList.IndexOf(item) / rowsInCol)); //get column from item index
 
                 int row = selectedList.IndexOf(item) - (rowsInCol * column) +
-                          Settings.ListStartRow; //get row by index & column
+                          _settings.ListStartRow; //get row by index & column
                 Console.WriteLine(" ");
-                Console.SetCursorPosition(column * rowWidth + Settings.ListRowOffset, row);
+                Console.SetCursorPosition(column * rowWidth + _settings.ListRowOffset, row);
 
                 if (item.Active && item.Selected)
                 {

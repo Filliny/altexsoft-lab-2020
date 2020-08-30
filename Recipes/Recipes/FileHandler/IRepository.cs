@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 
-using Recipes.Models;
-
 namespace Recipes.FileHandler
 {
     interface IRepository<T> where T : class

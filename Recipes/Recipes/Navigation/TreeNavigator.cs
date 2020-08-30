@@ -1,24 +1,27 @@
-﻿using Recipes.Models;
+﻿using System.Collections.Generic;
+using Recipes.Models;
 using Recipes.Views;
 
 namespace Recipes.Navigation
 {
 
-    class TreeNavigator
+    class TreeNavigator<T> where T : class, ICategory
     {
 
         //For Category tree and ICategory related types navigate and display
-        // Cos we have no parent categories pointer in children categories - all tree parents fill during navigation
-        public ICategory Navigate(ICategory tree, IKeyReader reader, ITreePrinter printer,
+        public ICategory Navigate(IList<T> tree, IKeyReader reader, ITreePrinter<T> printer,
             bool autoExpandChildren)
         {
-            ICategory currentCategory = tree;
-            ICategory parent = null;
+            List<T> sortedTree = (List<T>) tree;
+            sortedTree.Sort((x, y) => x.Id - y.Id);
+
+            ICategory currentCategory = tree[0];
+            int parentId = 0;
             int horizontal = 0;
-            tree.Active = true; //Highlight root category
+            sortedTree[0].Active = true; //Highlight root category
 
             currentCategory.Visible = true;
-            printer.PrintTree(tree);
+            printer.PrintTree(sortedTree);
 
             while (true)
             {
@@ -26,25 +29,27 @@ namespace Recipes.Navigation
 
                 if (destination == Destination.MoveDown)
                 {
-                    if (currentCategory.GetParent() == null) // if top category move down opens childs
+                    if (currentCategory.ParentCategoryId == 0) // if top category move down opens childs
                     {
-                        foreach (ICategory childCat in currentCategory.GetChildren())
+
+                        foreach (int childId in currentCategory.ChildIds)
                         {
-                            childCat.Visible = true;
+                            sortedTree[childId - 1].Visible = true; //all Id in sorted list == index + 1
                         }
 
-                        parent          = currentCategory;
-                        currentCategory = currentCategory.GetChildren()[horizontal];
+                        parentId = currentCategory.ParentCategoryId;
+                        //currentCategory = currentCategory.GetChildren()[horizontal];
 
                     }
                     else
                     {
-                        DeactivateCategory(currentCategory, autoExpandChildren);
+                        DeactivateCategory(currentCategory, sortedTree, autoExpandChildren);
 
-                        if (parent != null && parent.GetChildren().Count > horizontal + 1) //can we move down?
+                        if (parentId != 0 && sortedTree[parentId - 1].ChildIds.Count > horizontal + 1
+                        ) //can we move down?
                         {
                             horizontal++;
-                            currentCategory = parent.GetChildren()[horizontal];
+                            currentCategory = sortedTree[sortedTree[parentId - 1].ChildIds[horizontal] - 1];
                         }
                     }
 
@@ -52,13 +57,14 @@ namespace Recipes.Navigation
 
                 else if (destination == Destination.MoveUp)
                 {
-                    DeactivateCategory(currentCategory, autoExpandChildren);
+                    DeactivateCategory(currentCategory, sortedTree, autoExpandChildren);
 
                     if (0 <= horizontal - 1)
                     {
                         horizontal--;
 
-                        if (parent != null) currentCategory = parent.GetChildren()[horizontal];
+                        if (parentId != 0)
+                            currentCategory = sortedTree[sortedTree[parentId - 1].ChildIds[horizontal] - 1];
 
                     }
 
@@ -66,18 +72,18 @@ namespace Recipes.Navigation
 
                 else if (destination == Destination.MoveRight)
                 {
-                    DeactivateCategory(currentCategory, autoExpandChildren);
+                    DeactivateCategory(currentCategory, sortedTree, autoExpandChildren);
 
-                    if (currentCategory.GetChildren().Count != 0)
+                    if (currentCategory.ChildIds.Count != 0)
                     {
-                        foreach (ICategory childCat in currentCategory.GetChildren())
+                        foreach (int childId in currentCategory.ChildIds)
                         {
-                            childCat.Visible = true;
+                            sortedTree[childId - 1].Visible = true;
                         }
 
                         horizontal      = 0;
-                        parent          = currentCategory;
-                        currentCategory = currentCategory.GetChildren()[horizontal];
+                        parentId        = currentCategory.Id;
+                        currentCategory = sortedTree[currentCategory.ChildIds[horizontal] - 1];
 
                     }
 
@@ -86,22 +92,22 @@ namespace Recipes.Navigation
                 else if (destination == Destination.MoveLeft)
                 {
 
-                    if (currentCategory.GetParent() != null)
+                    if (currentCategory.ParentCategoryId != 0)
                     {
-                        DeactivateCategory(currentCategory, autoExpandChildren);
+                        DeactivateCategory(currentCategory, sortedTree, autoExpandChildren);
 
-                        if (parent != null)
+                        if (parentId != 0)
                         {
-                            foreach (ICategory childCat in parent.GetChildren())
+                            foreach (int childId in sortedTree[parentId - 1].ChildIds)
                             {
-                                childCat.Visible = false;
+                                sortedTree[childId - 1].Visible = false;
                             }
 
-                            currentCategory = currentCategory.GetParent();
+                            currentCategory = sortedTree[currentCategory.ParentCategoryId - 1];
                         }
 
-                        parent = currentCategory.GetParent();
-                        if (parent != null) horizontal = parent.GetChildren().IndexOf(currentCategory);
+                        parentId = currentCategory.ParentCategoryId;
+                        if (parentId != 0) horizontal = sortedTree[parentId - 1].ChildIds.IndexOf(currentCategory.Id);
 
                     }
                 }
@@ -113,66 +119,65 @@ namespace Recipes.Navigation
                 }
                 else if (destination == Destination.Esc)
                 {
-                    ResetActive(tree, currentCategory);
-                    HideAllCategories(tree);
-                    printer.ClearView(tree);
+                    ResetActive(sortedTree, currentCategory);
+                    HideAllCategories(sortedTree);
+                    printer.ClearView(sortedTree);
 
                     return null;
 
                 }
 
-                currentCategory.SetParent(parent);
-                ActivateCategory(currentCategory, autoExpandChildren);
+                //currentCategory.SetParent(parent);
+                ActivateCategory(currentCategory, sortedTree, autoExpandChildren);
 
-                printer.ClearView(tree);
-                printer.PrintTree(tree);
+                printer.ClearView(sortedTree);
+                printer.PrintTree(sortedTree);
 
             }
         }
 
-        void ActivateCategory(ICategory selected, bool autoExpandChildren) //to implement auto expand
+        void ActivateCategory(ICategory selected, IList<T> tree, bool autoExpandChildren) //to implement auto expand
         {
             selected.Active = true;
 
-            if (autoExpandChildren && selected.GetChildren().Count != 0)
+            if (autoExpandChildren && selected.ChildIds.Count != 0)
             {
-                foreach (ICategory children in selected.GetChildren())
+                foreach (int childrenId in selected.ChildIds)
                 {
-                    children.Visible = true;
+                    tree[childrenId - 1].Visible = true;
                 }
             }
 
         }
 
-        void DeactivateCategory(ICategory selected, bool autoExpandChildren) //to implement auto expand
+        void DeactivateCategory(ICategory selected, IList<T> tree, bool autoExpandChildren) //to implement auto expand
         {
             selected.Active = false;
 
-            if (autoExpandChildren && selected.GetChildren().Count != 0)
+            if (autoExpandChildren && selected.ChildIds.Count != 0)
             {
-                foreach (ICategory children in selected.GetChildren())
+                foreach (int childrenId in selected.ChildIds)
                 {
-                    children.Visible = false;
+                    tree[childrenId - 1].Visible = false;
                 }
             }
         }
 
-        void HideAllCategories(ICategory treeRoot)
+        void HideAllCategories(IList<T> tree)
         {
-            treeRoot.Visible = false;
 
-            foreach (ICategory category in treeRoot.GetChildren())
+            foreach (T category in tree)
             {
                 category.Visible = false;
-                HideAllCategories(category);
+                //HideAllCategories(category);
             }
 
         }
 
-        void ResetActive(ICategory rootTree, ICategory currentCategory)
+        void ResetActive(IList<T> rootTree, ICategory currentCategory) // resets active category to root
         {
             currentCategory.Active = false;
-            rootTree.Active        = true;
+            rootTree[0].Active     = true;
         }
 
     }

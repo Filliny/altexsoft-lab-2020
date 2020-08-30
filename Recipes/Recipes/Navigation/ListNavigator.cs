@@ -1,6 +1,5 @@
 ﻿using Recipes.Models;
 using Recipes.Views;
-
 using System.Collections.Generic;
 
 namespace Recipes.Navigation
@@ -16,14 +15,13 @@ namespace Recipes.Navigation
     class ListNavigator : IListNavigator
     {
 
-        private IKeyReader KeyReader { get; set; }
-
-        private IItemsView Printer { get; set; }
+        private readonly IKeyReader _keyReader;
+        private readonly IItemsView _printer;
 
         public ListNavigator(IKeyReader keyReader, IItemsView printer)
         {
-            KeyReader = keyReader;
-            Printer   = printer;
+            _keyReader = keyReader;
+            _printer   = printer;
         }
 
         //Navigate by list of items. Returns  selected item or null if selected other action 
@@ -38,11 +36,11 @@ namespace Recipes.Navigation
             {
 
                 recipes[index].Active = true;
-                Printer.ShowItems(recipes, selectable);
+                _printer.ShowItems(recipes, selectable);
 
                 while (true)
                 {
-                    Destination destination = KeyReader.GetDestination();
+                    Destination destination = _keyReader.GetDestination();
 
                     if (destination == Destination.MoveDown)
                     {
@@ -114,7 +112,7 @@ namespace Recipes.Navigation
                         return null;
                     }
 
-                    Printer.ShowItems(recipes, selectable);
+                    _printer.ShowItems(recipes, selectable);
                 }
 
             }

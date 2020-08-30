@@ -1,7 +1,5 @@
 ﻿using System.IO;
-
 using Newtonsoft.Json;
-
 using Recipes.Models;
 
 namespace Recipes.FileHandler

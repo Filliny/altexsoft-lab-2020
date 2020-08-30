@@ -1,28 +1,29 @@
-﻿using Recipes.Controllers;
+﻿using Recipes.FileHandler;
 using Recipes.Models;
 using System;
 using System.Linq;
 
 namespace Recipes.Views
 {
-    class RecipeView
+    class RecipeView:Description
     {
-        private IStorageContext Storage { get; }
 
-        private ITopView TopView { get; }
+        private readonly IUnitOfWork _storage;
 
-        public RecipeView(IStorageContext storage, ITopView topView)
+        private readonly ITopView _topView;
+
+        public RecipeView(IUnitOfWork storage, ITopView topView)
         {
-            Storage = storage;
-            TopView = topView;
+            _storage = storage;
+            _topView = topView;
         }
 
         public void ShowRecipe(IListable recipe)
         {
 
-            var onRecipe = Storage.RecipesFile.Storage.First(c => c.Id == recipe.Id);
+            var onRecipe = _storage.Recipes.GetAll().First(c => c.Id == recipe.Id);
 
-            TopView.ShowMenu(onRecipe.Name);
+            _topView.ShowMenu(onRecipe.Name);
 
             Console.SetCursorPosition(5,5);
 
@@ -30,9 +31,9 @@ namespace Recipes.Views
 
             foreach (var ingredientId in onRecipe.IngredientsId)
             {
-                var ingredient = Storage.IngredientsFile.IngredientsList.First(c => c.Id == ingredientId.Key);
+                var ingredient = _storage.Ingredients.GetAll().First(c => c.Id == ingredientId.Key);
 
-                Console.WriteLine($"{ingredient.Name}  = {ingredientId.Value} {ingredient.Measure}");
+                Console.WriteLine($"{ingredient.Name}  = {ingredientId.Value} { GetDescription(ingredient.Measure)}");
             }
 
             Console.WriteLine("\n     Описание\n");

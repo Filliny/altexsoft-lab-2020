@@ -1,5 +1,4 @@
-﻿using Recipes.Controllers;
-using Recipes.FileHandler;
+﻿using Recipes.FileHandler;
 using Recipes.Models;
 using System;
 using System.Collections.Generic;
@@ -17,15 +16,14 @@ namespace Recipes.Views
 
     }
 
-    class RecipeCreatorView : IRecipeCreatorView
+    class RecipeCreatorView : Description, IRecipeCreatorView
     {
 
+        private readonly IUnitOfWork _storage;
 
-        private IUnitOfWork FileUnit { get; }
-
-        public RecipeCreatorView(IUnitOfWork fileUnit)
+        public RecipeCreatorView(IUnitOfWork storage)
         {
-            FileUnit  = fileUnit;
+            _storage = storage;
 
         }
 
@@ -36,9 +34,9 @@ namespace Recipes.Views
 
             foreach (var ingredient in selectedIngredients)
             {
-                var realIngr = FileUnit.Ingredients.GetAll().First(c => c.Id == ingredient.Id);
+                var realIngredient = _storage.Ingredients.GetAll().First(c => c.Id == ingredient.Id);
 
-                Console.Write($"{realIngr.Name} количество, {Enum.GetName(typeof(Measurements), realIngr.Measure)} = ");
+                Console.Write($"{realIngredient.Name} количество, {GetDescription(realIngredient.Measure)} = ");
 
                 IFormatProvider provider = CultureInfo.CreateSpecificCulture("en-US");
                 decimal quantity;
@@ -50,7 +48,7 @@ namespace Recipes.Views
 
                 } while (!result && quantity == 0);
 
-                newRecipe.IngredientsId.Add(realIngr.Id, quantity);
+                newRecipe.IngredientsId.Add(realIngredient.Id, quantity);
 
             }
 
@@ -76,7 +74,7 @@ namespace Recipes.Views
             }
 
             newRecipe.CategoryId = category.Id;
-            var lastId = FileUnit.Recipes.GetAll().Max(c => c.Id);
+            var lastId = _storage.Recipes.GetAll().Max(c => c.Id);
             newRecipe.Id = ++lastId;
 
             Console.Write("\nСохранить рецепт? Д/Н : ");
@@ -84,11 +82,11 @@ namespace Recipes.Views
 
             if (answer != null && answer.Equals("Д"))
             {
-                FileUnit.Recipes.Create(newRecipe);
+                _storage.Recipes.Create(newRecipe);
 
                 try
                 {
-                    FileUnit.SaveFiles();
+                    _storage.SaveFiles();
                 }
                 catch (Exception e)
                 {

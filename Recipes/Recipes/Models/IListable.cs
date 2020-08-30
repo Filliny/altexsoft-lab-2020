@@ -5,10 +5,9 @@ namespace Recipes.Models
 {
 
     //For classes showed in itemsView
-    public interface IListable : IComparable
+    public interface IListable : IRelational, IComparable
     {
 
-        int Id { get; set; }
         string Name { get; set; }
 
         [JsonIgnore]

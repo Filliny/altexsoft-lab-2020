@@ -36,17 +36,4 @@ namespace Recipes.Models
 
     }
 
-    public class RecipesList : IDataserializable
-    {
-        private static readonly string _filename = "Recipes.json";
-        public string JsonFileName => _filename;
-        public IList<Recipe> Storage { get; set; }
-
-        public RecipesList()
-        {
-            Storage = new List<Recipe>();
-        }
-
-    }
-
 }

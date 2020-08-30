@@ -1,11 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-using Recipes.FileHandler;
+﻿using Recipes.FileHandler;
 using Recipes.Models;
 using Recipes.Navigation;
 using Recipes.Views;
-
 using Action = Recipes.Navigation.Action;
 
 namespace Recipes.Controllers
@@ -13,8 +9,6 @@ namespace Recipes.Controllers
 
     public class MainController
     {
-
-        List<int> list = new List<int>();
 
         public void Run()
         {
@@ -26,23 +20,24 @@ namespace Recipes.Controllers
             UnitOfWork fileUnit = new UnitOfWork(fileReader, fileWriter);
             fileUnit.ReadFiles(); //read all tables from files to storage
 
-            IStorageContext storage = fileUnit.Context;
-
             ITopView topView = new TopView(appSettings); //top menu plank view instance 
 
-            IKeyReader arrowsFull = new ArrowsReader();   //key reader for categories and lists
-            IKeyReader arrowsSimple = new SimpleReader(); //key reader for main top menu
+            IKeyReader arrowsFull = new ArrowsKeyReader(); //key reader for categories and lists
+            IKeyReader arrowsSimple = new SimpleReader();  //key reader for main top menu
 
-            ITreePrinter treePrinter = new TreeView(appSettings); //tree category printer
-            IItemsView listPrinter = new ItemsView(appSettings);  //list items printer
+            ITreePrinter<TopCategory> topPrinter = new TreeView<TopCategory>(appSettings);
+            ITreePrinter<Category> treePrinter = new TreeView<Category>(appSettings); //tree category printer
+            IItemsView listPrinter = new ItemsView(appSettings);                      //list items printer
 
-            RecipeView recipeView = new RecipeView(storage, topView);                 //to show selected recipe
-            TreeNavigator treeNavigator = new TreeNavigator();                        //tree navigator
+            RecipeView recipeView = new RecipeView(fileUnit, topView); //to show selected recipe
+            TreeNavigator<TopCategory> topNavigator = new TreeNavigator<TopCategory>();
+            TreeNavigator<Category> treeNavigator = new TreeNavigator<Category>();    //tree navigator
             ListNavigator listNavigator = new ListNavigator(arrowsFull, listPrinter); //list navigator
 
             IItemChooseView
                 ingredientChooserView =
-                    new ItemChooseView(fileUnit);                                   //view for choose ingredients new recipe 
+                    new ItemChooseView(
+                        fileUnit);                                                  //view for choose ingredients new recipe 
             IRecipeCreatorView recipeCreatorView = new RecipeCreatorView(fileUnit); //all recipe creator view
             IItemCreator itemCreator = new ItemCreator(topView, fileUnit);          //ingredient creator view
 
@@ -51,12 +46,12 @@ namespace Recipes.Controllers
 
                 topView.ShowMenu(string.Empty);
 
-                ICategory mainMenuItem = treeNavigator.Navigate(storage.TopMenu, arrowsSimple,
-                    treePrinter, appSettings.AutoexpandTree);
+                ICategory mainMenuItem = topNavigator.Navigate(fileUnit.TopMenu.GetAll(), arrowsSimple,
+                    topPrinter, appSettings.AutoexpandTree);
 
-                if (mainMenuItem.Id == 0) //working with recipes
+                if (mainMenuItem.Id == 1) //working with recipes
                 {
-                    ICategory recipeCategory = treeNavigator.Navigate(storage.RecipesTree.RootCategory,
+                    ICategory recipeCategory = treeNavigator.Navigate(fileUnit.Categories.GetAll(),
                         arrowsFull, treePrinter, appSettings.AutoexpandTree);
 
                     RecipesSelector recipesSelector = new RecipesSelector(); //recipes selector for displaying
@@ -65,7 +60,9 @@ namespace Recipes.Controllers
                     {
 
                         topView.ShowMenu(recipeCategory.Name);
-                        var recipesIn = recipesSelector.SelectRecipes(recipeCategory, storage.RecipesFile.Storage);
+
+                        var recipesIn = recipesSelector.SelectRecipes(recipeCategory,
+                            fileUnit.Recipes.GetAll(), fileUnit.Categories.GetAll());
 
                         var recipeChosen =
                             listNavigator.Navigate(recipesIn, out var action, false);
@@ -94,7 +91,7 @@ namespace Recipes.Controllers
                     }
 
                 }
-                else if (mainMenuItem.Id == 1) //working with ingredients
+                else if (mainMenuItem.Id == 2) //working with ingredients
                 {
                     Action action;
 
@@ -102,7 +99,7 @@ namespace Recipes.Controllers
                     {
                         topView.ShowMenu(mainMenuItem.Name);
 
-                        var ingredientChosen = listNavigator.Navigate(storage.IngredientsFile.GetListables(),
+                        var ingredientChosen = listNavigator.Navigate(fileUnit.Ingredients.GetListables(),
                             out action, false);
 
                         if (ingredientChosen == null && action == Action.Create)
@@ -115,7 +112,7 @@ namespace Recipes.Controllers
                     } while (action != Action.Esc);
 
                 }
-                else if (mainMenuItem.Id == 2)
+                else if (mainMenuItem.Id == 3)
                 {
                     fileUnit.Dispose(true);
 

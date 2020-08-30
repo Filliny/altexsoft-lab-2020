@@ -1,9 +1,6 @@
-﻿using Recipes.Controllers;
-using Recipes.FileHandler;
+﻿using Recipes.FileHandler;
 using Recipes.Models;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
@@ -17,26 +14,24 @@ namespace Recipes.Views
 
     }
 
-    class ItemCreator : IItemCreator
+    class ItemCreator : Description, IItemCreator
     {
 
-        private IRepository<Ingredient> Storage { get; }
-        private ITopView TopView { get; }
-        private IUnitOfWork Writer { get; }
+        private readonly IRepository<Ingredient> _storage;
+        private readonly ITopView _topView;
+        private readonly IUnitOfWork _fileSaver;
 
-        public ItemCreator(ITopView topView, IUnitOfWork writer)
+        public ItemCreator(ITopView topView, IUnitOfWork fileUnit)
         {
-            TopView = topView;
-            Writer  = writer;
-            Storage = writer.Ingredients;
+            _topView   = topView;
+            _fileSaver = fileUnit;
+            _storage   = fileUnit.Ingredients;
 
         }
 
         public void Create()
         {
-            TopView.ShowMenu("Новый ингридиент. Enter - создать, Esc - отмена >");
-
-            Ingredient newIngredient = new Ingredient();
+            _topView.ShowMenu("Новый ингридиент. Enter - создать, Esc - отмена >");
 
             Console.SetCursorPosition(1, 5);
             Console.Write("Enter - создать, Esc - отмена >");
@@ -50,7 +45,7 @@ namespace Recipes.Views
 
                 if (key == ConsoleKey.Escape)
                 {
-                    TopView.ShowMenu();
+                    _topView.ShowMenu();
 
                     return;
                 }
@@ -58,17 +53,21 @@ namespace Recipes.Views
             } while (key != ConsoleKey.Enter);
 
             Console.SetCursorPosition(1, 7);
+
+            Ingredient newIngredient = new Ingredient();
+
             Console.Write("Введите название:");
             newIngredient.Name = Console.ReadLine();
 
             Console.SetCursorPosition(1, 9);
             Console.Write("Выберите единицу измерения:\n");
 
-            var measures = Enum.GetNames(typeof(Measurements));
+            var measures = Enum.GetValues(typeof(Measurements));
 
-            for (int i = 0; i < measures.Length; i++)
+            foreach (Measurements VARIABLE in measures)
             {
-                Console.WriteLine($"{i + 1} - {measures[i]}");
+
+                Console.WriteLine($"{(int) VARIABLE} - {GetDescription(VARIABLE)}");
             }
 
             Measurements result;
@@ -80,8 +79,9 @@ namespace Recipes.Views
             } while (!Enum.IsDefined(typeof(Measurements), result));
 
             newIngredient.Measure = result;
-                
-            var lastId = Storage.GetAll().Max(c => c.Id); ;
+
+            var lastId = _storage.GetAll().Max(c => c.Id);
+            ;
             newIngredient.Id = ++lastId;
 
             Console.Write("\nСохранить ингредиент? Д/Н : ");
@@ -89,11 +89,11 @@ namespace Recipes.Views
 
             if (answer != null && answer.Equals("Д"))
             {
-                Storage.Create(newIngredient);
+                _storage.Create(newIngredient);
 
                 try
                 {
-                    Writer.SaveFiles();
+                    _fileSaver.SaveFiles();
                 }
                 catch (Exception e)
                 {
@@ -107,7 +107,7 @@ namespace Recipes.Views
 
             }
 
-            TopView.ShowMenu();
+            _topView.ShowMenu();
 
         }
 

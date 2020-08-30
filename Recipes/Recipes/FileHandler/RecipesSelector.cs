@@ -8,28 +8,29 @@ namespace Recipes.FileHandler
     public class RecipesSelector
     {
 
-        public List<IListable> Selected { get; }
+        private readonly List<IListable> _selected;
 
         public RecipesSelector()
         {
-            Selected = new List<IListable>();
+            _selected = new List<IListable>();
         }
 
-        public IList<IListable> SelectRecipes(ICategory selectedCategory, IList<Recipe> recipes)
+        public IList<IListable> SelectRecipes(ICategory selectedCategory, IList<Recipe> recipes, IList<Category> categoriesList)
         {
             var range = from r in recipes where r.CategoryId == selectedCategory.Id select r;
-            Selected.AddRange(range);
+            _selected.AddRange(range);
 
-            foreach (var childCategory in selectedCategory.GetChildren())
+            foreach (int childCategoryId in categoriesList[selectedCategory.Id-1].ChildIds)
             {
-                SelectRecipes(childCategory, recipes);
+                
+                SelectRecipes(categoriesList[childCategoryId-1], recipes, categoriesList);
             }
 
             //Selected.Sort((x,y)=>String.Compare(x.Name,y.Name,StringComparison.CurrentCulture));
             //moved IComparer to interface
-            Selected.Sort();
+            _selected.Sort();
 
-            return Selected;
+            return _selected;
         }
 
     }

@@ -1,20 +1,31 @@
-﻿namespace Recipes.Models
+﻿using System.ComponentModel;
+
+namespace Recipes.Models
 {
 
     public enum Measurements
     {
-
-        Грамм = 1,
-        Килограмм,
-        Ложек_столовых,
-        Ложек_чайных,
-        Частей,
-        Пучков,
-        Шт,
-        Литров,
-        Миллилитров
+        [Description("Грамм")]
+        Gram = 1,
+        [Description("Килограмм")]
+        Kilogram,
+        [Description("Столовых ложек")]
+        TableSpoon,
+        [Description("Чайных ложек")]
+        TeaSpoon,
+        [Description("Частей")]
+        Parts,
+        [Description("Пучков")]
+        Bunch,
+        [Description("Шт")]
+        Piece,
+        [Description("Литров")]
+        Liter,
+        [Description("Миллилитров")]
+        Milliliter
 
         
+
     }
 
 }

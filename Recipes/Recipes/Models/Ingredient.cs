@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Recipes.Models
 {
@@ -19,31 +18,6 @@ namespace Recipes.Models
             Ingredient other = (Ingredient) obj;
 
             return string.Compare(this.Name, other.Name, StringComparison.CurrentCulture);
-        }
-
-    }
-
-    public class Ingredients : IDataserializable
-    {
-        private static readonly string _filename = "Ingredients.json";
-        public string JsonFileName => _filename;
-        public IList<Ingredient> IngredientsList { get; set; }
-
-        public Ingredients()
-        {
-            IngredientsList = new List<Ingredient>();
-        }
-
-        public IList<IListable> GetListables()
-        {
-            IList<IListable> result = new List<IListable>();
-
-            foreach (var ingredient in IngredientsList)
-            {
-                result.Add(ingredient);
-            }
-
-            return result;
         }
 
     }
