@@ -34,10 +34,7 @@ namespace Recipes.Controllers
             TreeNavigator<Category> treeNavigator = new TreeNavigator<Category>();    //tree navigator
             ListNavigator listNavigator = new ListNavigator(arrowsFull, listPrinter); //list navigator
 
-            IItemChooseView
-                ingredientChooserView =
-                    new ItemChooseView(
-                        fileUnit);                                                  //view for choose ingredients new recipe 
+            IItemChooseView ingredientChooserView = new ItemChooseView(fileUnit);   //view for choose ingredients new recipe 
             IRecipeCreatorView recipeCreatorView = new RecipeCreatorView(fileUnit); //all recipe creator view
             IItemCreator itemCreator = new ItemCreator(topView, fileUnit);          //ingredient creator view
 
