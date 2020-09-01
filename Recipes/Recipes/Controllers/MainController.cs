@@ -20,8 +20,6 @@ namespace Recipes.Controllers
             UnitOfWork fileUnit = new UnitOfWork(fileManager);
             fileUnit.ReadFiles(); //read all tables from files to storage
 
-            //FileWriters<>
-
             ITopView topView = new TopView(appSettings); //top menu plank view instance 
 
             IKeyReader arrowsFull = new ArrowsKeyReader(); //key reader for categories and lists

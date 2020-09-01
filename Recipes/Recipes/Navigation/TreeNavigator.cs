@@ -85,9 +85,9 @@ namespace Recipes.Navigation
                         currentCategory = children[horizontal];
                         neighbors       = tree.Where(x => x.ParentId == parentId).ToArray();
 
-                        foreach (var childId in neighbors)
+                        foreach (var id in neighbors)
                         {
-                            sortedTree[childId.Id - 1].Visible = true;
+                            sortedTree[id.Id - 1].Visible = true;
                         }
                     }
 
