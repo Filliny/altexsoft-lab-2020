@@ -1,8 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Reflection;
 
-namespace Recipes.Models
+namespace Recipes.Views
 {
 
     class Description
@@ -11,18 +9,54 @@ namespace Recipes.Models
         protected string GetDescription(Enum enumElement)
         {
             Type type = enumElement.GetType();
+            string result = "Частей";
 
-            MemberInfo[] memInfo = type.GetMember(enumElement.ToString());
-
-            if (memInfo != null && memInfo.Length > 0)
+            if (type.IsEnumDefined(enumElement))
             {
-                object[] attrs = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
+                var res = (int) Enum.Parse(type, enumElement.ToString());
 
-                if (attrs != null && attrs.Length > 0)
-                    return ((DescriptionAttribute) attrs[0]).Description;
+                switch (res)
+                {
+                    case 1:
+                        result = "Грамм";
+
+                        break;
+                    case 2:
+                        result = "Килограмм";
+
+                        break;
+                    case 3:
+                        result = "Столовых ложек";
+
+                        break;
+                    case 4:
+                        result = "Чайных ложек";
+
+                        break;
+                    case 5:
+                        result = "Частей";
+
+                        break;
+                    case 6:
+                        result = "Пучков";
+
+                        break;
+                    case 7:
+                        result = "Шт";
+
+                        break;
+                    case 8:
+                        result = "Литров";
+
+                        break;
+                    case 9:
+                        result = "Миллилитров";
+
+                        break;
+                }
             }
 
-            return enumElement.ToString();
+            return result;
         }
 
     }

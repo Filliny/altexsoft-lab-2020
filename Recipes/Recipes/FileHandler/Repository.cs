@@ -6,7 +6,7 @@ using System.Linq;
 namespace Recipes.FileHandler
 {
 
-    abstract class Repository<T> : IRepository<T> where T : class, IRelational
+    abstract class Repository<T> : IRepository<T> where T :  CategoryModel
     {
 
         private readonly IList<T> _collection;

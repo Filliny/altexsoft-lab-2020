@@ -12,13 +12,15 @@ namespace Recipes.Controllers
 
         public void Run()
         {
+
             Settings appSettings = new Settings(); //init settings  (hardcoded- can be .json too)
 
-            IFileWriter fileWriter = new FileWriter();
-            IFileReader fileReader = new FileReader();
+            IFileManager fileManager = new FileManager();
 
-            UnitOfWork fileUnit = new UnitOfWork(fileReader, fileWriter);
+            UnitOfWork fileUnit = new UnitOfWork(fileManager);
             fileUnit.ReadFiles(); //read all tables from files to storage
+
+            //FileWriters<>
 
             ITopView topView = new TopView(appSettings); //top menu plank view instance 
 
@@ -34,7 +36,9 @@ namespace Recipes.Controllers
             TreeNavigator<Category> treeNavigator = new TreeNavigator<Category>();    //tree navigator
             ListNavigator listNavigator = new ListNavigator(arrowsFull, listPrinter); //list navigator
 
-            IItemChooseView ingredientChooserView = new ItemChooseView(fileUnit);   //view for choose ingredients new recipe 
+            IItemChooseView
+                ingredientChooserView =
+                    new ItemChooseView(fileUnit);                                   //view for choose ingredients new recipe 
             IRecipeCreatorView recipeCreatorView = new RecipeCreatorView(fileUnit); //all recipe creator view
             IItemCreator itemCreator = new ItemCreator(topView, fileUnit);          //ingredient creator view
 
@@ -46,15 +50,17 @@ namespace Recipes.Controllers
                 ICategory mainMenuItem = topNavigator.Navigate(fileUnit.TopMenu.GetAll(), arrowsSimple,
                     topPrinter, appSettings.AutoexpandTree);
 
-                if (mainMenuItem.Id == 1) //working with recipes
+                switch (mainMenuItem.Id)
                 {
-                    ICategory recipeCategory = treeNavigator.Navigate(fileUnit.Categories.GetAll(),
-                        arrowsFull, treePrinter, appSettings.AutoexpandTree);
+                    case 1: //working with recipes
 
-                    RecipesSelector recipesSelector = new RecipesSelector(); //recipes selector for displaying
+                        ICategory recipeCategory = treeNavigator.Navigate(fileUnit.Categories.GetAll(),
+                            arrowsFull, treePrinter, appSettings.AutoexpandTree);
 
-                    if (recipeCategory != null)
-                    {
+                        RecipesSelector recipesSelector = new RecipesSelector(); //recipes selector for displaying
+
+                        if (recipeCategory == null)
+                            break;
 
                         topView.ShowMenu(recipeCategory.Name);
 
@@ -85,35 +91,34 @@ namespace Recipes.Controllers
                             recipeView.ShowRecipe(recipeChosen);
                         }
 
-                    }
+                        break;
 
-                }
-                else if (mainMenuItem.Id == 2) //working with ingredients
-                {
-                    Action action;
+                    case 2: // working with ingredients
 
-                    do
-                    {
-                        topView.ShowMenu(mainMenuItem.Name);
+                        Action action1;
 
-                        var ingredientChosen = listNavigator.Navigate(fileUnit.Ingredients.GetListables(),
-                            out action, false);
-
-                        if (ingredientChosen == null && action == Action.Create)
+                        do
                         {
-                            topView.ShowMenu(string.Empty);
+                            topView.ShowMenu(mainMenuItem.Name);
 
-                            itemCreator.Create();
-                        }
+                            var ingredientChosen = listNavigator.Navigate(fileUnit.Ingredients.GetListables(),
+                                out action1, false);
 
-                    } while (action != Action.Esc);
+                            if (ingredientChosen == null && action1 == Action.Create)
+                            {
+                                topView.ShowMenu(string.Empty);
 
-                }
-                else if (mainMenuItem.Id == 3)
-                {
-                    fileUnit.Dispose(true);
+                                itemCreator.Create();
+                            }
 
-                    return;
+                        } while (action1 != Action.Esc);
+
+                        break;
+
+                    case 3:
+                        fileUnit.Dispose(true);
+
+                        return;
                 }
 
             }

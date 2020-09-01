@@ -1,6 +1,4 @@
-﻿using Recipes.Controllers;
-using Recipes.Models;
-
+﻿using Recipes.Models;
 using System;
 
 namespace Recipes.FileHandler
@@ -17,23 +15,20 @@ namespace Recipes.FileHandler
         private CategoriesRepository _categoriesRepository;
         private TopMenuRepository _topMenuRepository;
 
-        private readonly IFileReader _reader;
-        private readonly IFileWriter _writer;
+        private readonly IFileManager _fileManager;
 
-        public UnitOfWork(IFileReader reader, IFileWriter writer)
+        public UnitOfWork(IFileManager fileManager)
         {
-            _reader = reader;
-            _writer = writer;
-        }
+            _fileManager = fileManager;
 
-        //public IStorageContext Context => storage;
+        }
 
         public RecipeRepository Recipes
         {
             get
             {
                 if (_recipeRepository == null)
-                    _recipeRepository = new RecipeRepository(_storage.RecipesFile.Storage);
+                    _recipeRepository = new RecipeRepository(_storage.RecipesFile.ItemsList);
 
                 return _recipeRepository;
 
@@ -45,7 +40,7 @@ namespace Recipes.FileHandler
             get
             {
                 if (_ingredientsRepository == null)
-                    _ingredientsRepository = new IngredientsRepository(_storage.IngredientsFile.IngredientsList);
+                    _ingredientsRepository = new IngredientsRepository(_storage.IngredientsFile.ItemsList);
 
                 return _ingredientsRepository;
 
@@ -57,7 +52,7 @@ namespace Recipes.FileHandler
             get
             {
                 if (_categoriesRepository == null)
-                    _categoriesRepository = new CategoriesRepository(_storage.RecipesTree.CategoryList);
+                    _categoriesRepository = new CategoriesRepository(_storage.RecipesTree.ItemsList);
 
                 return _categoriesRepository;
 
@@ -69,7 +64,7 @@ namespace Recipes.FileHandler
             get
             {
                 if (_topMenuRepository == null)
-                    _topMenuRepository = new TopMenuRepository(_storage.TopCategories.TopArticles);
+                    _topMenuRepository = new TopMenuRepository(_storage.TopCategories.ItemsList);
 
                 return _topMenuRepository;
 
@@ -78,16 +73,16 @@ namespace Recipes.FileHandler
 
         public void ReadFiles()
         {
-            _storage.RecipesTree     = (Categories) _reader.ReadFile<Categories>();
-            _storage.IngredientsFile = (Ingredients) _reader.ReadFile<Ingredients>();
-            _storage.RecipesFile     = (RecipesList) _reader.ReadFile<RecipesList>();
-            _storage.TopCategories   = (TopMenu) _reader.ReadFile<TopMenu>();
+            _storage.RecipesTree.ItemsList     = _fileManager.ReadFile<Category>();
+            _storage.IngredientsFile.ItemsList = _fileManager.ReadFile<Ingredient>();
+            _storage.RecipesFile.ItemsList     = _fileManager.ReadFile<Recipe>();
+            _storage.TopCategories.ItemsList   = _fileManager.ReadFile<TopCategory>();
         }
 
         public void SaveFiles()
         {
-            _writer.WriteFile(_storage.IngredientsFile);
-            _writer.WriteFile(_storage.RecipesFile);
+            _fileManager.WriteFile(_storage.IngredientsFile.ItemsList);
+            _fileManager.WriteFile(_storage.RecipesFile.ItemsList);
         }
 
         public virtual void Dispose(bool disposing)
@@ -98,11 +93,11 @@ namespace Recipes.FileHandler
                 {
                     _storage.Dispose();
                 }
-        
+
                 this._disposed = true;
             }
         }
-        
+
         public void Dispose()
         {
             Dispose(true);

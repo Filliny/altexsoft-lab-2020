@@ -1,16 +1,16 @@
-﻿using Recipes.Models;
+﻿using System;
+using Recipes.Models;
 
-namespace Recipes.Controllers
+namespace Recipes.FileHandler
 {
 
-    public interface IStorageContext
+    public interface IStorageContext:IDisposable
     {
 
-        Categories RecipesTree { get; set; }
-        Ingredients IngredientsFile { get; set; }
-        RecipesList RecipesFile { get; set; }
-        TopMenu TopCategories { get; set; }
-        void Dispose();
+        ListModel<Category> RecipesTree { get; set; }
+        ListModel<Ingredient> IngredientsFile { get; set; }
+        ListModel<Recipe> RecipesFile { get; set; }
+        ListModel<TopCategory> TopCategories { get; set; }
 
     }
 

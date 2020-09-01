@@ -3,12 +3,8 @@
 namespace Recipes.Models
 {
 
-    public class Ingredient : IListable
+    public class Ingredient : CategoryModel, IListable
     {
-
-        public int Id { get; set; }
-        public string Name { get; set; }
-
         public bool Active { get; set; }
         public bool Selected { get; set; }
         public Measurements Measure { get; set; }

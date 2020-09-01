@@ -7,13 +7,6 @@ using System.Threading;
 namespace Recipes.Views
 {
 
-    internal interface IItemCreator
-    {
-
-        void Create();
-
-    }
-
     class ItemCreator : Description, IItemCreator
     {
 

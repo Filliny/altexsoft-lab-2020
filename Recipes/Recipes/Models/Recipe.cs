@@ -4,19 +4,14 @@ using System.Collections.Generic;
 namespace Recipes.Models
 {
 
-    public class Recipe : IListable
+    public class Recipe : CategoryModel, IListable
     {
 
-        public int Id { get; set; }
-        public string Name { get; set; }
         public int CategoryId { get; set; }
         public bool Active { get; set; }
         public bool Selected { get; set; }
-
         public string Explanation { get; set; }
-
         public Dictionary<int, decimal> IngredientsId { get; set; }
-
         public List<string> Steps { get; set; }
 
         public Recipe()

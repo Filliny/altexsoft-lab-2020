@@ -8,13 +8,6 @@ using Action = Recipes.Navigation.Action;
 namespace Recipes.Views
 {
 
-    internal interface IItemChooseView
-    {
-
-        IList<IListable> Choose(IListNavigator navigator, IItemCreator creator);
-
-    }
-
     class ItemChooseView : IItemChooseView
     {
 

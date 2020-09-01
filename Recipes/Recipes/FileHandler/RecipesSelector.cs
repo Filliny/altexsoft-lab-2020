@@ -20,10 +20,12 @@ namespace Recipes.FileHandler
             var range = from r in recipes where r.CategoryId == selectedCategory.Id select r;
             _selected.AddRange(range);
 
-            foreach (int childCategoryId in categoriesList[selectedCategory.Id-1].ChildIds)
+            var children = categoriesList.Where(x => x.ParentId == selectedCategory.Id);
+
+            foreach (Category childCategory in children)
             {
                 
-                SelectRecipes(categoriesList[childCategoryId-1], recipes, categoriesList);
+                SelectRecipes(childCategory, recipes, categoriesList);
             }
 
             //Selected.Sort((x,y)=>String.Compare(x.Name,y.Name,StringComparison.CurrentCulture));

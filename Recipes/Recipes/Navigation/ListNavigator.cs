@@ -5,13 +5,6 @@ using System.Collections.Generic;
 namespace Recipes.Navigation
 {
 
-    internal interface IListNavigator
-    {
-
-        IListable Navigate(IList<IListable> recipes, out Action action, bool selectable);
-
-    }
-
     class ListNavigator : IListNavigator
     {
 

@@ -1,17 +1,10 @@
 ﻿using Recipes.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Recipes.Views
 {
-
-    internal interface ITreePrinter<T> where T : class, ICategory
-    {
-
-        void PrintTree(IList<T> treeList);
-        void ClearView(IList<T> rootCat, int col = 0);
-
-    }
 
     class TreeView<T> : ITreePrinter<T> where T : class, ICategory
     {
@@ -25,7 +18,8 @@ namespace Recipes.Views
 
         public void PrintTree(IList<T> treeList)
         {
-            if (treeList[0].ChildIds.Count != 0)
+
+            if (treeList.Count != 0)
             {
                 PrintVisible(treeList, 0, 0, treeList[0].Position);
             }
@@ -56,9 +50,11 @@ namespace Recipes.Views
                 Console.BackgroundColor = ConsoleColor.Blue;
             }
 
-            foreach (int categoryId in tree[startIndex].ChildIds)
+            var childs = tree.Where(x => x.ParentId == tree[startIndex].Id);
+
+            foreach (var categoryId in childs)
             {
-                PrintVisible(tree, categoryId - 1, col + _settings.TreeCellWidth, row);
+                PrintVisible(tree, categoryId.Id - 1, col + _settings.TreeCellWidth, row);
                 row++;
             }
 
@@ -86,9 +82,11 @@ namespace Recipes.Views
                 Console.Write(" ");
             }
 
-            foreach (int childId in cat[startIndex].ChildIds)
+            var childs = cat.Where(x => x.ParentId == cat[startIndex].Id);
+
+            foreach (var childId in childs)
             {
-                PrintInvisible(cat, childId - 1, row, col + _settings.TreeCellWidth);
+                PrintInvisible(cat, childId.Id - 1, row, col + _settings.TreeCellWidth);
                 row++;
             }
 

@@ -10,10 +10,6 @@ namespace Recipes
         static void Main(string[] args)
         {
 
-            // DbTester test = new DbTester();
-            // test.SetDb();
-
-
             MainController program = new MainController();
 
             try

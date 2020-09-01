@@ -9,16 +9,24 @@ namespace Recipes.FileHandler
 
     public class StorageContext : IStorageContext
     {
-        private bool _disposed = false;
+        private bool _disposed ;
 
-        public Categories RecipesTree { get; set; }
-        public Ingredients IngredientsFile { get; set; }
-        public RecipesList RecipesFile { get; set; }
-        public TopMenu TopCategories { get; set; }
+        public ListModel<Category> RecipesTree { get; set; }
+        public ListModel<Ingredient> IngredientsFile { get; set; }
+        public ListModel<Recipe> RecipesFile { get; set; }
+        public ListModel<TopCategory> TopCategories { get; set; }
+
+        public StorageContext()
+        {
+            RecipesTree = new ListModel<Category>();
+            IngredientsFile = new ListModel<Ingredient>();
+            RecipesFile = new ListModel<Recipe>();
+            TopCategories = new ListModel<TopCategory>();
+        }
 
         public void Dispose()
         {
-            if (!this._disposed == false)
+            if (!_disposed)
             {
                 _disposed = true;
                 GC.SuppressFinalize(this);
