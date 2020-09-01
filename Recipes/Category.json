@@ -1,0 +1,62 @@
+[
+  {
+    "Id": 1,
+    "Name": "Все блюда",
+    "Position": 3,
+    "ParentId": 0
+  },
+  {
+    "Id": 2,
+    "Name": "Первые блюда",
+    "Position": 3,
+    "ParentId": 1
+  },
+  {
+    "Id": 9,
+    "Name": "Супы",
+    "Position": 3,
+    "ParentId": 2
+  },
+  {
+    "Id": 10,
+    "Name": "Борщи",
+    "Position": 3,
+    "ParentId": 2
+  },
+  {
+    "Id": 3,
+    "Name": "Вторые блюда",
+    "Position": 3,
+    "ParentId": 1
+  },
+  {
+    "Id": 5,
+    "Name": "Гарниры",
+    "Position": 3,
+    "ParentId": 3
+  },
+  {
+    "Id": 6,
+    "Name": "Мясные блюда",
+    "Position": 3,
+    "ParentId": 3
+  },
+  {
+    "Id": 4,
+    "Name": "Десерты",
+    "Position": 3,
+    "ParentId": 1
+  },
+  {
+    "Id": 7,
+    "Name": "Выпечка",
+    "Position": 3,
+    "ParentId": 4
+  },
+  {
+    "Id": 8,
+    "Name": "Желе",
+    "Position": 3,
+    "ParentId": 4
+  }
+]
